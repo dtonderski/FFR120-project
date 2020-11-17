@@ -1,5 +1,7 @@
 clear all
 clc
+addpath('classes/bug-model')
+addpath('classes/house-model')
 AREA_SIZE = 10;
 
 numberOfSteps = 1000;
