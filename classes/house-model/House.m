@@ -14,16 +14,20 @@ classdef House
             %   Detailed explanation goes here
             obj.x_dim = x_dim;
             obj.y_dim = y_dim;
-            obj.lattice = initialize_lattice(obj);
-        end        
-        
-        function lattice = initialize_lattice(obj)
-            lattice(obj.x_dim, obj.y_dim) = Vertex();
-        end    
-        
-        function vertex = get_vertex(obj, x_coordinate, y_coordinate)
-            vertex = obj.lattice(x_coordinate, y_coordinate);
+            obj.lattice = Lattice(x_dim, y_dim);
         end
+        
+        function hidden = get_hidden(obj, x, y)
+            hidden = obj.lattice.hidden_lattice(x,y);
+        end
+        
+        function traversable = get_traversable(obj, x, y)
+            traversable = obj.lattice.traversable_lattice(x,y);
+            if x > 128 || x < 1 || y > 128 || y < 1
+                traversable = 0;
+            end
+        end
+        
     end
 end
 
