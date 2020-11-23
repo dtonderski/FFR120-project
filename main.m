@@ -58,7 +58,7 @@ while (time <= numberOfTime)
     % Plot
     if rem(time,1)==0
         cla
-        plot(X,Y,'o')
+        plot(X,Y,'o','MarkerFaceColor','r')
         title(['Simulation step = ' num2str(time)])
         axis([0,AREA_SIZE,0,AREA_SIZE])
         drawnow update
