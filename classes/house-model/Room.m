@@ -57,7 +57,7 @@ classdef Room
             
             furniture_number = obj.lattice_with_furniture(x_room,y_room);
 
-            if furniture_number == -1 && furniture_number == 0
+            if furniture_number == -1 || furniture_number == 0
                 traversable = true;
                 return
             else
@@ -88,7 +88,6 @@ classdef Room
                 y = col_hidden(i) + obj.room_start_house(2) - 1;
                 position_vector = [x-1/2, y-1/2, 1, 1];
                 rectangle('Position', position_vector, 'FaceColor', obj.hiding_place_color, 'LineStyle', 'none')
-                disp(position_vector)
             end
             
         end
