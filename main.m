@@ -7,7 +7,7 @@ AREA_SIZE = 10;
 house = House(10,10);
 house = house.add_room("Kitchen", [1,1], [3,3]);
 house = house.add_room("Hall", [4,1], [6,10]);
-%house = house.add_wall([7 1], [7 10]);
+house = house.add_wall([7 1], [7 10]);
 house.is_traversable(7,1);
 
 
@@ -29,10 +29,12 @@ bug1 = Bug(currentPositionX(1), currentPositionY(1), AREA_SIZE);
 validStandard = 1;
 i = 1;
 while (~isempty(validStandard) && i < numberOfSteps)
+    disp(i)
     if (i <= numberOfRandomSteps)
         bug1 = bug1.move(validStandard);
     else
         validStandard = house.is_traversable(bug1.row, bug1.col);
+        disp(validStandard)
         bug1 = bug1.move(validStandard);
     end
 %     set(h,'XData',bug1.row,'YData',bug1.col);
