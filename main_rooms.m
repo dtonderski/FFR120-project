@@ -43,7 +43,7 @@ for t = 1:2000
     end
     %X = [bug(1).row];
     %Y = [bug(1).col];
-    scatter(X,Y,2,'g','filled')
+    scatter(X,Y,20,'g','filled')
     shg;
 end
 

@@ -1,0 +1,42 @@
+1. Bug behaviour
+	a) death
+	b) movement validity
+	c) search for food
+	d) colour change (depending on age)
+	e) laying eggs (only in hiding spots)
+		i)  depending on age
+		ii) random number of eggs (in what range? for now only 1, but should be a feature)
+
+2. Human behaviour
+	a) movement
+	b) cleaning
+	c) generating food
+	d) 
+3. House
+	a) hiding spots
+	b) design of the house
+	c) independent from house (David)
+
+3. Food
+	a) properties
+		i)  quantity (integer)
+
+4. Bug control
+	a) pesticide
+		i) can be put in hiding spots
+		ii) probabilistic
+		iii) drug resistance (evolution) 
+	b) trap
+		i) sticky pad
+	c) 
+
+5. Statistics
+	a)
+6. Environment
+	a) time
+	b) night-day cycle
+	c) temperature / air humidity
+	d) light level
+
+
+Time step - 1 second
