@@ -1,6 +1,7 @@
 addpath('classes/house-model')
 addpath('classes/human-model')
 addpath('classes/bug-model')
+addpath('classes/food-model')
 
 
 clear
@@ -23,6 +24,9 @@ human2 = Human([51 21]);
 human3 = Human([89 75]);
 human_list = [human1, human2, human3];
 
+food_lattice = Food_lattice(house);
+food_lattice = food_lattice.add_food([10, 10], 1);
+
 bug(1) = Bug(20, 30, 100);
 X = [bug(1).row];
 Y = [bug(1).col];
@@ -32,9 +36,10 @@ for t = 1:2000
     hold on
     house.show_house();
     for i_human = 1:length(human_list)
-        human_list(i_human) = human_list(i_human).move(house);
+        human_list(i_human) = human_list(i_human).move_random(house);
         human_list(i_human).show_human('x', 20)
     end
+    food_lattice.show_food('.', 30, 'red')
     bug(1) = bug(1).move(1,house);
     numOfBug = numel(bug);
     for index = 1:numOfBug
@@ -56,7 +61,7 @@ for t = 1:2000
     end
     %X = [bug(1).row];
     %Y = [bug(1).col];
-    scatter(X,Y,10,'g','filled')
+    scatter(X,Y,20,'g','filled')
     shg;
 end
 

@@ -15,7 +15,7 @@ classdef Human
             obj.house = house;
         end
         
-        function obj = move(obj, house)
+        function obj = move_random(obj, house)
             current_house = house;
             while true
                 direction = randi([1 2]);
