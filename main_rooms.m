@@ -6,9 +6,17 @@ addpath('classes/bug-model')
 clear
 house = House(100,100);
 house = house.add_walls_around_house;
-house = house.add_room("Kitchen", [2,2], [50, 50], [1 1 1]);
+house = house.add_room("Kitchen", [2,2], [50, 40], [1 1 1]);
+house = house.add_room("Bedroom 1", [2,60], [40, 99], [1 1 1]);
+house = house.add_room("Bedroom 2", [41,60], [80, 99], [1 1 1]);
+house = house.add_room("Toilet", [81,60], [99, 99], [1 1 1]);
+house = house.add_room("Closet", [2,42], [20, 58], [1 1 1]);
+
 house = house.add_door([51, 21], [51, 31]);
-house = house.add_hiding_place([2,2],[5,5]);
+house = house.add_door([30, 59], [35, 59]);
+house = house.add_door([70, 59], [75, 59]);
+house = house.add_door([88, 59], [93, 59]);
+house = house.add_door([21, 47], [21, 52]);
 
 human1 = Human([2 2]);
 human2 = Human([51 21]);
