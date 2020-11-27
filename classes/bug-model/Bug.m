@@ -16,9 +16,14 @@ classdef Bug
             obj.latticenum = lat*(row -1)+col;
             obj.age = 0;
         end
-        function obj = move(obj,validStandard)
-            
+        function obj = move(obj,validStandard,house)
+            %addpath('classes/house-model')
+            if isnan(obj.row)
+                return
+            end
             r = rand;
+            temp_row = obj.row;
+            temp_col = obj.col;
             if (r < validStandard)
                 moveDirection = randi(4);
                 if moveDirection == 1
@@ -40,6 +45,10 @@ classdef Bug
             else
                 obj.row = obj.row;
                 obj.col = obj.col;
+            end
+            if house.is_traversable(obj.row, obj.col) ~= true
+               obj.row = temp_row;
+               obj.col = temp_col;
             end
         end
 
