@@ -88,10 +88,11 @@ classdef House
         
         function obj = move_humans(obj)
             for human_index = 1:length(obj.human_list)
-                %disp(obj.human_list(human_index).position)
+
                 human = obj.human_list(human_index);
                 obj.human_list(human_index) = human.move();
-                %disp(obj.human_list(human_index).position)
+
+
             end
         end
         

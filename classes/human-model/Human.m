@@ -5,6 +5,7 @@ classdef Human
     properties
         position
         house
+        room
     end
     
     methods
@@ -30,6 +31,22 @@ classdef Human
                 end
             end        
         end
+        
+        function obj = clean(obj, house, clean_room)
+            
+            for rooms = 1:length(house.room_list)
+                if isequal(house.room_list(1,rooms).room_name, clean_room)
+                    
+                disp('Remove food and other trash')
+                end
+            end
+
+        end
+        
+        
+        
     end
+    
+    
 end
 
