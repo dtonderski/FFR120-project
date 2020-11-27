@@ -4,21 +4,19 @@ classdef Human
     
     properties
         position
-        house
     end
     
     methods
-        function obj = Human(position, house)
+        function obj = Human(position)
             obj.position = position;
-            obj.house = house;
         end
         
         function obj = assignHouse(obj, house)
             obj.house = house;
         end
         
-        function obj = move(obj)
-            current_house = obj.house;
+        function obj = move(obj, house)
+            current_house = house;
             while true
                 direction = randi([1 2]);
                 newPosition = obj.position;
@@ -30,6 +28,11 @@ classdef Human
                 end
             end        
         end
+        
+        function show_human(obj, markerType, markerSize)
+            plot(obj.position(1), obj.position(2), markerType, 'MarkerSize', markerSize)
+        end
+        
     end
 end
 
