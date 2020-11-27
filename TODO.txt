@@ -19,7 +19,7 @@
 	c) independent from house 										(David)		DONE
 
 3. Food
-	a) properties												(David) 	URGENT
+	a) properties												(David) 	DONE
 		i)  quantity (integer)	
 
 4. Bug control													(Avinash) 	URGENT
