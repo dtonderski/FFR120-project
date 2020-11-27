@@ -18,14 +18,10 @@ house = house.add_door([70, 59], [75, 59]);
 house = house.add_door([88, 59], [93, 59]);
 house = house.add_door([21, 47], [21, 52]);
 
-human = Human([2 2], house);
-house = house.add_human(human);
-
-human = Human([51 21], house);
-house = house.add_human(human);
-
-human = Human([89 75], house);
-house = house.add_human(human);
+human1 = Human([2 2]);
+human2 = Human([51 21]);
+human3 = Human([89 75]);
+human_list = [human1, human2, human3];
 
 bug(1) = Bug(20, 30, 100);
 X = [bug(1).row];
@@ -34,9 +30,11 @@ Y = [bug(1).col];
 for t = 1:2000
     clf
     hold on
-    house = house.move_humans();
     house.show_house();
-    house.show_humans();
+    for i_human = 1:length(human_list)
+        human_list(i_human) = human_list(i_human).move(house);
+        human_list(i_human).show_human('x', 20)
+    end
     bug(1) = bug(1).move(1,house);
     numOfBug = numel(bug);
     for index = 1:numOfBug

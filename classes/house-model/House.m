@@ -12,7 +12,6 @@ classdef House
         y_size
         room_list
         lattice_with_rooms
-        human_list
     end
     
     methods
@@ -80,28 +79,6 @@ classdef House
             %NOTE - doors must be added at the end, as they will be
             %overwritten otherwise.
             obj = obj.add_room('door', door_start, door_stop, [1 1 1]);
-        end
-        
-        function obj = add_human(obj, human)
-            obj.human_list = [obj.human_list, human];            
-        end
-        
-        function obj = move_humans(obj)
-            for human_index = 1:length(obj.human_list)
-
-                human = obj.human_list(human_index);
-                obj.human_list(human_index) = human.move();
-
-
-            end
-        end
-        
-        function show_humans(obj)
-            for human_index = 1:length(obj.human_list)
-                human = obj.human_list(human_index);
-                position = human.position;
-                plot(position(1), position(2), 'x', 'MarkerSize', 30)
-            end
         end
         
         function traversable = is_traversable(obj, x,y)
