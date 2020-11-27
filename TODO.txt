@@ -15,8 +15,8 @@
 	d) 
 3. House
 	a) hiding spots												(David)		
-	b) design of the house											(Joakim/David)	
-	c) independent from house 										(David)		URGENT
+	b) design of the house											(Joakim/David)	DONE
+	c) independent from house 										(David)		DONE
 
 3. Food
 	a) properties												(David) 	URGENT
