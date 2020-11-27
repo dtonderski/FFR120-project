@@ -4,21 +4,19 @@ classdef Human
     
     properties
         position
-        house
     end
     
     methods
-        function obj = Human(position, house)
+        function obj = Human(position)
             obj.position = position;
-            obj.house = house;
         end
         
         function obj = assignHouse(obj, house)
             obj.house = house;
         end
         
-        function obj = move(obj)
-            current_house = obj.house;
+        function obj = move(obj, house)
+            current_house = house;
             while true
                 direction = randi([1 2]);
                 newPosition = obj.position;
@@ -29,6 +27,20 @@ classdef Human
                     return;
                 end
             end        
+        end
+        
+        function show_human(obj, markerType, markerSize)
+            plot(obj.position(1), obj.position(2), markerType, 'MarkerSize', markerSize)
+        end
+        
+        function obj = clean(obj, house, clean_room)
+            
+            for rooms = 1:length(house.room_list)
+                if isequal(house.room_list(1,rooms).room_name, clean_room)
+                    
+                disp('Remove food and other trash')
+                end
+            end
         end
     end
 end
