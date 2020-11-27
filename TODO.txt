@@ -1,0 +1,43 @@
+1. Bug behaviour
+	a) death												(Avinash) 	URGENT
+	b) movement validity											(Avinash) 	URGENT
+	c) search for food											(Ruxin)
+	d) colour change (depending on age)									(Ruxin)
+	e) laying eggs (only in hiding spots)									(Avinash/Ruxin)
+		i)  depending on age
+		ii) random number of eggs (in what range? for now only 1, but should be a feature)
+	f) hunger												(Avinash/Ruxin)
+
+2. Human behaviour
+	a) movement												(Joakim)
+	b) cleaning												(Joakim) 	URGENT
+	c) generating food											(Joakim/David) 	URGENT
+	d) 
+3. House
+	a) hiding spots												(David)		
+	b) design of the house											(Joakim/David)	
+	c) independent from house 										(David)		URGENT
+
+3. Food
+	a) properties												(David) 	URGENT
+		i)  quantity (integer)	
+
+4. Bug control													(Avinash) 	URGENT
+	a) pesticide												
+		i) can be put in hiding spots
+		ii) probabilistic
+		iii) drug resistance (evolution) 
+	b) trap
+		i) sticky pad
+	c) 
+
+5. Statistics - what plots?
+	a) Bug density ( time )
+	b) Bug eradication time ( cleaning frequency )
+
+6. Environment													(David)
+	a) time (step - 1 second)
+	b) night-day cycle
+	c) temperature / air humidity
+	d) light level
+

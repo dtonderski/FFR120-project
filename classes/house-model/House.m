@@ -92,6 +92,7 @@ classdef House
                 human = obj.human_list(human_index);
                 obj.human_list(human_index) = human.move();
 
+
             end
         end
         
@@ -102,7 +103,6 @@ classdef House
                 plot(position(1), position(2), 'x', 'MarkerSize', 30)
             end
         end
-        
         
         function traversable = is_traversable(obj, x,y)
             room_number = obj.lattice_with_rooms(x,y);
@@ -115,9 +115,7 @@ classdef House
                 traversable = room.is_traversable(x,y);
             end
         end
-        
-
-        
+      
         function show_house(obj)
             doors = [];
             for room = obj.room_list
