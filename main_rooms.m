@@ -29,21 +29,28 @@ for t = 1:2000
     house = house.move_humans();
     house.show_house();
     house.show_humans();
-    bug(1) = bug(1).move(1);
+    bug(1) = bug(1).move(1,house);
     numOfBug = numel(bug);
     for index = 1:numOfBug
-        bug(index) = bug(index).move(1);
+        bug(index) = bug(index).move(1,house);
         bug(index) = bug(index).grow();
-        bug(index) = bug(index).move(1);
+        bug(index) = bug(index).move(1,house);
         X(index) = [bug(index).row];
         Y(index) = [bug(index).col];
-        if bug(index).age == 3
-            bug(index+1) = Bug(bug(index).row, bug(index).col, 100);   
+        if bug(index).age == 40
+            numOfBug = numel(bug);
+            randombugnum = randi(2);
+            for i = 1:randombugnum
+                bug(numOfBug+i) = Bug(bug(index).row, bug(index).col, 100); 
+            end
+        end
+        if bug(index).age == 60
+            bug(index) = bug(index).die();
         end
     end
     %X = [bug(1).row];
     %Y = [bug(1).col];
-    scatter(X,Y,20,'g','filled')
+    scatter(X,Y,10,'g','filled')
     shg;
 end
 
