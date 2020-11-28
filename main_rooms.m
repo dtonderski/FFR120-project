@@ -5,63 +5,78 @@ addpath('classes/food-model')
 
 
 clear
+
 house = House(100,100);
 house = house.add_walls_around_house;
-house = house.add_room("Kitchen", [2,2], [50, 40], [1 1 1]);
-house = house.add_room("Bedroom 1", [2,60], [40, 99], [1 1 1]);
-house = house.add_room("Bedroom 2", [41,60], [80, 99], [1 1 1]);
-house = house.add_room("Toilet", [81,60], [99, 99], [1 1 1]);
-house = house.add_room("Closet", [2,42], [20, 58], [1 1 1]);
+
+kitchen  = Room("Kitchen", [2,2], [50, 40], [1 1 1]);
+bedroom1 = Room("Bedroom 1", [2, 60], [40, 99], [1 1 1]);
+bedroom2 = Room("Bedroom 2", [41, 60], [80, 99], [1 1 1]);
+toilet   = Room("Toilet", [81,60], [99, 99], [1 1 1]);
+closet   = Room("Closet", [2,42], [20, 58], [1 1 1]);
+
+room_list = [kitchen, bedroom1, bedroom2, toilet, closet];
+for room = room_list
+    house = house.add_room(room);
+end
 
 house = house.add_door([51, 21], [51, 31]);
 house = house.add_door([30, 59], [35, 59]);
 house = house.add_door([70, 59], [75, 59]);
 house = house.add_door([88, 59], [93, 59]);
 house = house.add_door([21, 47], [21, 52]);
+house = house.add_hiding_place([2 2], [10 10]);
 
-human1 = Human([2 2]);
-human2 = Human([51 21]);
-human3 = Human([89 75]);
+human1 = Human(kitchen);
+human2 = Human(bedroom2);
+human3 = Human(toilet);
 human_list = [human1, human2, human3];
 
+bug1 = Bug(20, 20, house);
+bug2 = Bug(35, 40, house);
+bug_list = [bug1, bug2];
+
 food_lattice = Food_lattice(house);
-food_lattice = food_lattice.add_food([10, 10], 1);
+food_lattice = human1.litter(food_lattice, 100, 4);
 
-bug(1) = Bug(20, 30, 100);
-X = [bug(1).row];
-Y = [bug(1).col];
+reproduction_age = 1;
+death_age = 100;
+reproduction_number = 1;
+move_out_of_hiding_place_probability = 0.9;
+reproduction_probability = 0.01;
 
-for t = 1:2000
+[p1, p2, p3] = show_all(house, human_list, food_lattice, bug_list);
+
+for t = 1:100
+    bug_list = Bug.update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability);
+    %show_all(house, human_list, food_lattice, bug_list);
+    [p1, p2, p3] = update_plot(human_list, food_lattice, bug_list, p1, p2, p3);
+    
+    title(sprintf('$t = %d, n_{bugs} = %d$', t, length(bug_list)), 'interpreter', 'latex');
+    if length(bug_list) < 1
+        break
+    end
+    pause(0.1)
+end
+
+function [p1, p2, p3] = show_all(house, human_list, food_lattice, bug_list)
     clf
     hold on
     house.show_house();
-    for i_human = 1:length(human_list)
-        human_list(i_human) = human_list(i_human).move_random(house);
-        human_list(i_human).show_human('x', 20)
-    end
-    food_lattice.show_food('.', 30, 'red')
-    bug(1) = bug(1).move(1,house);
-    numOfBug = numel(bug);
-    for index = 1:numOfBug
-        bug(index) = bug(index).move(1,house);
-        bug(index) = bug(index).grow();
-        bug(index) = bug(index).move(1,house);
-        X(index) = [bug(index).row];
-        Y(index) = [bug(index).col];
-        if bug(index).age == 40
-            numOfBug = numel(bug);
-            randombugnum = randi(2);
-            for i = 1:randombugnum
-                bug(numOfBug+i) = Bug(bug(index).row, bug(index).col, 100); 
-            end
-        end
-        if bug(index).age == 60
-            bug(index) = bug(index).die();
-        end
-    end
-    %X = [bug(1).row];
-    %Y = [bug(1).col];
-    scatter(X,Y,20,'g','filled')
-    shg;
+    p1 = Human.show_humans(human_list, 'x', 1000, 'black');
+    p2 = food_lattice.show_food('.', 1000, 'blue');
+    p3 = Bug.show_bugs(bug_list, '.', 1000, 'green');
 end
+
+function [p1, p2, p3] = update_plot(human_list, food_lattice, bug_list, p1, p2, p3)
+    hold on
+    delete(p1);
+    delete(p2);
+    delete(p3);
+    p1 = Human.show_humans(human_list, 'x', 1000, 'black');
+    p2 = food_lattice.show_food('.', 1000, 'blue');
+    p3 = Bug.show_bugs(bug_list, '.', 1000, 'green');
+    
+end
+
 

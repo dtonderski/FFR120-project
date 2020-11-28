@@ -3,44 +3,45 @@ classdef Human
     %   Detailed explanation goes here
     
     properties
-        position
+        room
+        sleeping
     end
     
     methods
-        function obj = Human(position)
-            obj.position = position;
+        function obj = Human(room)
+            obj.room = room;
+        end
+                
+        function obj = change_room(obj, room)
+            obj.room = room;
         end
         
-        function obj = assignHouse(obj, house)
-            obj.house = house;
+%         function show_human(obj, markerType, markerSize)
+%             room_center = (obj.room.room_stop_house + obj.room.room_start_house)/2;
+%             plot(room_center(1), room_center(2), markerType, 'MarkerSize', markerSize)
+%         end
+        
+        function [food_lattice] = clean(obj, food_lattice)
+            food_lattice = food_lattice.clean_area(obj.room.room_start_house, obj.room.room_stop_house);           
         end
         
-        function obj = move_random(obj, house)
-            current_house = house;
-            while true
-                direction = randi([1 2]);
-                newPosition = obj.position;
-                newPosition(direction) = newPosition(direction) + randi([0 1])*2-1;
-
-                if(current_house.is_traversable(newPosition(1), newPosition(2)))
-                    obj.position = newPosition;
-                    return;
-                end
-            end        
+        function food_lattice = litter(obj, food_lattice, quantity, numberOfLocations)
+            food_lattice = food_lattice.add_food_area(obj.room.room_start_house, obj.room.room_stop_house, quantity, numberOfLocations);    
         end
+    end
+    
+    methods(Static)
         
-        function show_human(obj, markerType, markerSize)
-            plot(obj.position(1), obj.position(2), markerType, 'MarkerSize', markerSize)
-        end
-        
-        function obj = clean(obj, house, clean_room)
-            
-            for rooms = 1:length(house.room_list)
-                if isequal(house.room_list(1,rooms).room_name, clean_room)
-                    
-                disp('Remove food and other trash')
-                end
+        function p = show_humans(human_list, marker_type, marker_size, color)
+            n_humans = length(human_list);
+            X = zeros(1, n_humans);
+            Y = zeros(1, n_humans);
+            for i = 1:n_humans
+                room_center = (human_list(i).room.room_stop_house + human_list(i).room.room_start_house)/2;
+                X(i) = room_center(1);
+                Y(i) = room_center(2);
             end
+            p = scatter(X,Y,marker_size,marker_type,color);
         end
     end
 end

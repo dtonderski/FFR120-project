@@ -1,65 +1,79 @@
 classdef Bug
+    % Hunger - bug can only reproduce if hunger 
+    
     properties
-        row {mustBeNumeric}
-        col {mustBeNumeric}
-        latticesize {mustBeNumeric}
-        latticenum {mustBeNumeric}
+        x {mustBeNumeric}
+        y {mustBeNumeric}
         age {mustBeNumeric}
-
-
+        hunger {mustBeNumeric}
+        in_hiding_place
     end
+    
     methods
-        function obj = Bug(row,col,lat)
-            obj.row = row;
-            obj.col = col;
-            obj.latticesize = lat;
-            obj.latticenum = lat*(row -1)+col;
+        function obj = Bug(x,y, house)
+            obj.x = x;
+            obj.y = y;
             obj.age = 0;
+            obj.in_hiding_place = house.is_hiding_place(x,y);
         end
-        function obj = move(obj,validStandard,house)
-            %addpath('classes/house-model')
-            if isnan(obj.row)
-                return
-            end
-            r = rand;
-            temp_row = obj.row;
-            temp_col = obj.col;
-            if (r < validStandard)
-                moveDirection = randi(4);
-                if moveDirection == 1
-                    obj.row = obj.row - 1;
-                    obj.col = obj.col;
-                elseif moveDirection == 2
-                    obj.row = obj.row + 1;
-                    obj.col = obj.col;
-                elseif moveDirection == 3
-                    obj.col = obj.col - 1;
-                    obj.row = obj.row;
-                elseif moveDirection == 4
-                    obj.col = obj.col + 1;
-                    obj.row = obj.row;
-                else
-                    obj.row = obj.row;
-                    obj.col = obj.col;
+        
+        function obj = move(obj, house, food_lattice, moveOutOfHidingPlaceProbability)
+            if obj.in_hiding_place
+                if rand < moveOutOfHidingPlaceProbability
+                    food_locations_in_room = house.get_food_locations_in_current_room(obj.x, obj.y, food_lattice);
+                    food_location_index = randi([1, size(food_locations_in_room, 1)]);
+                    obj.x = food_locations_in_room(food_location_index, 1);
+                    obj.y = food_locations_in_room(food_location_index, 2);
+                    obj.in_hiding_place = false;
                 end
             else
-                obj.row = obj.row;
-                obj.col = obj.col;
+                hiding_place_index = randi([1, size(house.hiding_places, 1)]);
+                new_location_x = randi(house.hiding_places(hiding_place_index, [1 3]));
+                new_location_y = randi(house.hiding_places(hiding_place_index, [2 4]));
+                obj.x = new_location_x; 
+                obj.y = new_location_y;
+                obj.in_hiding_place = true;
             end
-            if house.is_traversable(obj.row, obj.col) ~= true
-               obj.row = temp_row;
-               obj.col = temp_col;
-            end
+            
         end
 
         function obj = grow(obj)
             
             obj.age = obj.age + 1;
+        end    
+        
+    end
+    methods(Static)
+        function bug_list = update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability)
+            bugs_to_kill_indices = [];
+            for bug_index = 1:length(bug_list)
+                bug = bug_list(bug_index);
+                bug = bug.move(house, food_lattice, move_out_of_hiding_place_probability);
+                bug = bug.grow();
+                bug_list(bug_index) = bug;
+                if bug.age >= death_age
+                    bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
+                elseif bug.age > reproduction_age
+                    if rand < reproduction_probability
+                        for i = 1:reproduction_number
+                            bug_list = [bug_list, Bug(bug.x, bug.y, house)];
+                        end
+                    end
+                end
+            end
+            bug_list(bugs_to_kill_indices) = [];
         end
         
-        function obj = die(obj)
-            obj.row = NaN;
-            obj.col = NaN;
+        function p = show_bugs(bug_list, marker_type, marker_size, color)
+            n_bugs = length(bug_list);
+            X = zeros(1, n_bugs);
+            Y = zeros(1, n_bugs);
+            for i = 1:n_bugs
+                bug = bug_list(i);
+                X(i) = bug.x;
+                Y(i) = bug.y;
+            end
+            p = scatter(X,Y,marker_size,marker_type,color);
         end
     end
 end
