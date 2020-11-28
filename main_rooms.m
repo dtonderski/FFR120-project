@@ -31,6 +31,11 @@ bug(1) = Bug(20, 30, 100);
 X = [bug(1).row];
 Y = [bug(1).col];
 
+X1 = [NaN];
+Y1 = [NaN];
+
+X2 = [NaN];
+Y2 = [NaN];
 for t = 1:2000
     clf
     hold on
@@ -42,26 +47,62 @@ for t = 1:2000
     food_lattice.show_food('.', 30, 'red')
     bug(1) = bug(1).move(1,house);
     numOfBug = numel(bug);
+    disp('no of bug');
+    disp(numOfBug);
+    dead_bugs = [];
+    youngbug = 0;
+    midagebug = 0;
+    oldbug = 0;
     for index = 1:numOfBug
         bug(index) = bug(index).move(1,house);
         bug(index) = bug(index).grow();
         bug(index) = bug(index).move(1,house);
         X(index) = [bug(index).row];
         Y(index) = [bug(index).col];
+        if bug (index).age <= 10
+           youngbug = youngbug + 1;
+           X(youngbug) = [bug(youngbug).row];
+           Y(youngbug) = [bug(youngbug).col];
+        elseif bug (index).age <= 40
+           midagebug = midagebug + 1;
+           X1(midagebug) = [bug(midagebug).row];
+           Y1(midagebug) = [bug(midagebug).col];
+        elseif bug (index).age > 40
+           oldbug = oldbug + 1;
+           X2(oldbug) = [bug(oldbug).row];
+           Y2(oldbug) = [bug(oldbug).col];
+        end
         if bug(index).age == 40
             numOfBug = numel(bug);
-            randombugnum = randi(2);
+            randombugnum = randi(5);
             for i = 1:randombugnum
                 bug(numOfBug+i) = Bug(bug(index).row, bug(index).col, 100); 
             end
         end
         if bug(index).age == 60
             bug(index) = bug(index).die();
-        end
+            dead_bugs(end+1) = index;
+        elseif isnan(bug(index).row)
+		    dead_bugs(end+1) = index;
+        else
+		end
     end
     %X = [bug(1).row];
     %Y = [bug(1).col];
-    scatter(X,Y,20,'g','filled')
+    scatter(X,Y,10,'g','filled')
     shg;
+    scatter(X1,Y1,20,'r','filled')
+    shg;
+    scatter(X2,Y2,20,'y','filled')
+    shg;
+    if numel(dead_bugs) >= 1
+        for index = 1:numel(dead_bugs)
+            bug(dead_bugs(index)) = [];
+        end
+        numOfBug = numel(bug);
+        disp('no of bug after death');
+        disp(numOfBug);
+    end
+    
 end
 
