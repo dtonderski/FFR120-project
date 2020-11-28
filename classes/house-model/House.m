@@ -1,5 +1,5 @@
 classdef House
-    %HOSUE1Q Summary of this class goes here
+    %HOUSE Summary of this class goes here
     %   x_size             - house size x
     %   y_size             - house size y
     %   room_list          - list with all the rooms in the house

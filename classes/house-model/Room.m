@@ -1,12 +1,12 @@
 classdef Room
     %ROOM Summary of this class goes here
-    %   room_name        - name of the room
-    %   room_start_house - coordinate of the start point of the room in the house
-    %   room_stop_house  - coordinate of the end point of the room in the house
+    %   room_name              - name of the room
+    %   room_start_house       - coordinate of the start point of the room in the house
+    %   room_stop_house        - coordinate of the end point of the room in the house
     %   lattice_with_furniture - room lattice:
-    %                          hiding_place = -1 
-    %                          floor = 0
-    %                          furniture  = other    
+    %                            hiding_place = -1 
+    %                            floor = 0
+    %                            furniture  = other    
     
     properties
         room_name

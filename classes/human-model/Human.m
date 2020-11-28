@@ -1,6 +1,8 @@
 classdef Human
     %HUMAN Summary of this class goes here
-    %   Detailed explanation goes here
+    %   room        - the room that the human is currently in
+    %   sleeping    - boolean that says whether the human is sleeping
+    
     
     properties
         room
@@ -15,11 +17,6 @@ classdef Human
         function obj = change_room(obj, room)
             obj.room = room;
         end
-        
-%         function show_human(obj, markerType, markerSize)
-%             room_center = (obj.room.room_stop_house + obj.room.room_start_house)/2;
-%             plot(room_center(1), room_center(2), markerType, 'MarkerSize', markerSize)
-%         end
         
         function [food_lattice] = clean(obj, food_lattice)
             food_lattice = food_lattice.clean_area(obj.room.room_start_house, obj.room.room_stop_house);           

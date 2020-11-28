@@ -42,14 +42,14 @@ food_lattice = human1.litter(food_lattice, 100, 4);
 reproduction_age = 1;
 death_age = 100;
 reproduction_number = 1;
-move_out_of_hiding_place_probability = 0.9;
+move_out_of_hiding_place_probability = 0.1;
 reproduction_probability = 0.01;
 
 [p1, p2, p3] = show_all(house, human_list, food_lattice, bug_list);
 
 for t = 1:100
     bug_list = Bug.update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability);
-    %show_all(house, human_list, food_lattice, bug_list);
+    % show_all(house, human_list, food_lattice, bug_list);
     [p1, p2, p3] = update_plot(human_list, food_lattice, bug_list, p1, p2, p3);
     
     title(sprintf('$t = %d, n_{bugs} = %d$', t, length(bug_list)), 'interpreter', 'latex');

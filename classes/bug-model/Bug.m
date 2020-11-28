@@ -1,5 +1,10 @@
 classdef Bug
-    % Hunger - bug can only reproduce if hunger 
+    %BUG Summary of this class goes here
+    % x,y             - position of bug on lattice
+    % age             - age of the bug controls death and reproduction
+    % hunger          - bug dies when hunger reaches some value
+    % in_hiding_place - boolean that says whether a bug is currently in a
+    %                   hiding place
     
     properties
         x {mustBeNumeric}
@@ -43,6 +48,7 @@ classdef Bug
         end    
         
     end
+    
     methods(Static)
         function bug_list = update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability)
             bugs_to_kill_indices = [];
