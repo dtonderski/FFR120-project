@@ -1,29 +1,28 @@
 1. Bug behaviour
-	a) death												(Avinash) 	URGENT
-	b) movement validity											(Avinash) 	URGENT
-	c) search for food											(Ruxin)
-	d) colour change (depending on age)									(Ruxin)
-	e) laying eggs (only in hiding spots)									(Avinash/Ruxin)
+	a) death (hunger)
+	b) colour change (depending on age)									(Ruxin)
+	c) laying eggs (only in hiding spots)									(Avinash)
 		i)  depending on age
 		ii) random number of eggs (in what range? for now only 1, but should be a feature)
-	f) hunger												(Avinash/Ruxin)
+	d) hunger												(Ruxin)
+	e) moving between hiding places										(David)
 
 2. Human behaviour
-	a) movement												(Joakim)
-	b) cleaning												(Joakim) 	URGENT
-	c) generating food											(Joakim/David) 	URGENT
-	d) 
+	a) movement												(Joakim)												
+	b) cleaning												(Joakim)												
+	c) generating food											(Joakim)
+
 3. House
-	a) hiding spots												(David)		
-	b) design of the house											(Joakim/David)	DONE
-	c) independent from house 										(David)		DONE
+	a) hiding spots												(David)
+	b) design of the house											(Joakim)
 
 3. Food
 	a) properties												(David) 	DONE
-		i)  quantity (integer)	
+		i)  quantity (integer)
+	b)	
 
-4. Bug control													(Avinash) 	URGENT
-	a) pesticide												
+4. Bug control													
+	a) pesticide
 		i) can be put in hiding spots
 		ii) probabilistic
 		iii) drug resistance (evolution) 
@@ -35,8 +34,8 @@
 	a) Bug density ( time )
 	b) Bug eradication time ( cleaning frequency )
 
-6. Environment													(David)
-	a) time (step - 1 second)
+6. Environment													(Joakim)													
+	a) time (step - 10 minutes)
 	b) night-day cycle
 	c) temperature / air humidity
 	d) light level
