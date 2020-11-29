@@ -53,7 +53,7 @@ classdef Food_lattice
             current_food = obj.lattice(location(1), location(2));
             if current_food ~= 0
                 index = ismember(obj.food_locations, location, 'rows');
-                obj.food_lattice(location(1), location(2)) = 0;
+                obj.lattice(location(1), location(2)) = 0;
                 obj.food_locations(index, :) = [];
             end
 
