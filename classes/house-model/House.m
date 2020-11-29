@@ -1,5 +1,5 @@
 classdef House
-    %HOSUE1Q Summary of this class goes here
+    %HOUSE Summary of this class goes here
     %   x_size             - house size x
     %   y_size             - house size y
     %   room_list          - list with all the rooms in the house
@@ -12,6 +12,7 @@ classdef House
         y_size
         room_list
         lattice_with_rooms
+        hiding_places
     end
     
     methods
@@ -22,19 +23,31 @@ classdef House
             obj.lattice_with_rooms = zeros(x_size, y_size);
         end
         
-        function obj = add_room(obj, room_name, room_start, room_stop, room_color)
+        function obj = edit_room(obj,room)
+            for i_room = 1:length(obj.room_list)
+                if isequal(room.room_name, obj.room_list(i_room).room_name)
+                    room_index = i_room;
+                    break;
+                end
+            end
+            obj.room_list(room_index) = room;
+        end
+        
+        function obj = add_room(obj, room)
             %METHOD1 Summary of this method goes here
             %   roomName  = string
             %   roomStart = [x,y]
             %   roomStop  = [x,y]
             existing_number_rooms = length(obj.room_list);
-            room = Room(room_name, room_start, room_stop, room_color);
             obj.room_list = [obj.room_list, room];
+            
+            room_start = room.room_start_house;
+            room_stop = room.room_stop_house;
+            
             obj.lattice_with_rooms(room_start(1):room_stop(1), room_start(2):room_stop(2)) = ...
                 (existing_number_rooms + 1);
-                %ones(room_stop(1) - room_start(1) + 1, room_stop(2) - room_start(2) + 1)*(existing_number_rooms + 1);
-            
-            if ~(isequal(room_name, 'wall') || isequal(room_name, 'door'))
+                
+            if ~(isequal(room.room_name, 'wall') || isequal(room.room_name, 'door'))
                 x_start = room_start(1) - 1;
                 x_stop  = room_stop (1) + 1;
                 y_start = room_start(2) - 1;
@@ -60,12 +73,13 @@ classdef House
             
             obj.room_list(i_room) = room;
             
+            obj.hiding_places = [obj.hiding_places; hiding_place_start, hiding_place_stop];
+            
         end
         
         function obj = add_wall(obj, wall_start, wall_stop)
-            obj = obj.add_room('wall', wall_start, wall_stop, [0 0 0]);
-%             obj.lattice_with_rooms(wall_start(1):wall_stop(1), wall_start(2):wall_stop(2)) = ...
-%                 ones(wall_stop(1) - wall_start(1) + 1, wall_stop(2) - wall_start(2) + 1)*(-1);
+            wall = Room('wall', wall_start, wall_stop, [0 0 0]);
+            obj = obj.add_room(wall);
         end
         
         function obj = add_walls_around_house(obj)
@@ -78,7 +92,8 @@ classdef House
         function obj = add_door(obj, door_start, door_stop)
             %NOTE - doors must be added at the end, as they will be
             %overwritten otherwise.
-            obj = obj.add_room('door', door_start, door_stop, [1 1 1]);
+            door = Room('door', door_start, door_stop, [1 1 1]);
+            obj = obj.add_room(door);
         end
         
         function traversable = is_traversable(obj, x,y)
@@ -111,6 +126,22 @@ classdef House
             ylim([0, obj.y_size+1])
         end
         
+        function food_locations_in_room = get_food_locations_in_current_room(obj, x, y, food_lattice)
+            current_room = obj.room_list(obj.lattice_with_rooms(x,y));
+            food_locations_in_room = food_lattice.get_food_locations_in_area(current_room.room_start_house, current_room.room_stop_house);
+        end
+        
+        function hidden = is_hiding_place(obj, x, y)
+            room_number = obj.lattice_with_rooms(x,y);
+            
+            if room_number == 0
+                hidden = false;
+                return
+            else
+                room = obj.room_list(room_number);
+                hidden = room.is_traversable(x,y);
+            end
+        end
         
         
         
