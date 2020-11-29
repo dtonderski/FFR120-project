@@ -5,6 +5,7 @@ classdef Bug
     % hunger          - bug dies when hunger reaches some value
     % in_hiding_place - boolean that says whether a bug is currently in a
     %                   hiding place
+    % drug resistance
     
     properties
         x {mustBeNumeric}
@@ -12,6 +13,7 @@ classdef Bug
         age {mustBeNumeric}
         hunger {mustBeNumeric}
         in_hiding_place
+        drug_resistance {mustBeNumeric}
     end
     
     methods
@@ -19,6 +21,7 @@ classdef Bug
             obj.x = x;
             obj.y = y;
             obj.age = 0;
+            obj.hunger = 0;
             obj.in_hiding_place = house.is_hiding_place(x,y);
         end
         
@@ -45,19 +48,33 @@ classdef Bug
         function obj = grow(obj)
             
             obj.age = obj.age + 1;
-        end    
+        end
         
+        % a new function
+        function [obj,food_lattice] = consume(obj,food_lattice)
+            obj.hunger = obj.hunger + 0.014;  % less than 12h not eat food bug will die
+            food_locations_in_house = food_lattice.food_locations;
+            for i = 1:size(food_locations_in_house,1)
+                if (obj.x == food_locations_in_house(i,1)&&obj.y==food_locations_in_house(i,2))
+                    obj.hunger = max(0,obj.hunger-1);   % maybe we can also consider food quantity(1 or less than 1;if 1, hunger = 0,food remove;else if less than 1, hunger > 0, food partly remove,keep eating?)
+                    food_lattice = food_lattice.remove_food(food_locations_in_house(i,:));
+                    break;
+                end
+            end
+        end
     end
     
     methods(Static)
-        function bug_list = update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability)
+        function [bug_list,food_lattice] = update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability)
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);
                 bug = bug.move(house, food_lattice, move_out_of_hiding_place_probability);
+                % add this line, can I add 'food_lattice' on the output part?
+                [bug,food_lattice] = bug.consume(food_lattice);
                 bug = bug.grow();
                 bug_list(bug_index) = bug;
-                if bug.age >= death_age
+                if bug.age >= death_age || bug.hunger >= 1   % also make change here
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
                 elseif bug.age > reproduction_age
                     if rand < reproduction_probability
@@ -69,6 +86,17 @@ classdef Bug
             end
             bug_list(bugs_to_kill_indices) = [];
         end
+        
+%         % add this part
+%         function bug_locations_in_area = get_bug_locations_in_area(bug_list, room)
+%             bug_locations_in_area = [];
+%             for i_bug_location = 1:size(bug_list, 1)
+%                 bug_location = bug_list(i_bug_location,:);
+%                 if all(bug_location <= room.room_stop_house & bug_location >= room.room_start_house)
+%                     bug_locations_in_area = [bug_locations_in_area; bug_location(1), bug_location(2)];
+%                 end
+%             end
+%         end
         
         function p = show_bugs(bug_list, marker_type, marker_size, color)
             n_bugs = length(bug_list);
