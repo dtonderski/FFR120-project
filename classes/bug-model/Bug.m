@@ -29,10 +29,12 @@ classdef Bug
             if obj.in_hiding_place
                 if rand < moveOutOfHidingPlaceProbability
                     food_locations_in_room = house.get_food_locations_in_current_room(obj.x, obj.y, food_lattice);
-                    food_location_index = randi([1, size(food_locations_in_room, 1)]);
-                    obj.x = food_locations_in_room(food_location_index, 1);
-                    obj.y = food_locations_in_room(food_location_index, 2);
-                    obj.in_hiding_place = false;
+                    if ~isempty(food_locations_in_room)
+                        food_location_index = randi([1, size(food_locations_in_room, 1)]);
+                        obj.x = food_locations_in_room(food_location_index, 1);
+                        obj.y = food_locations_in_room(food_location_index, 2);
+                        obj.in_hiding_place = false;
+                    end
                 end
             else
                 hiding_place_index = randi([1, size(house.hiding_places, 1)]);

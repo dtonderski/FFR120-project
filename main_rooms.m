@@ -48,7 +48,7 @@ reproduction_probability = 0.01;
 [p1, p2, p3] = show_all(house, human_list, food_lattice, bug_list);
 
 for t = 1:100
-    bug_list = Bug.update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability);
+    [bug_list, food_lattice] = Bug.update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability);
     % show_all(house, human_list, food_lattice, bug_list);
     [p1, p2, p3] = update_plot(human_list, food_lattice, bug_list, p1, p2, p3);
     
@@ -56,6 +56,7 @@ for t = 1:100
     if length(bug_list) < 1
         break
     end
+    %disp(max(max(food_lattice.lattice)))
     pause(0.1)
 end
 

@@ -19,14 +19,14 @@
 3. Food
 	a) properties												(David) 	DONE
 		i)  quantity (integer)
-	b)	
+	b) function to remove quantity of food									(David/Ruxin)
 
 4. Bug control													
-	a) pesticide
+	a) pesticide												
 		i) can be put in hiding spots
 		ii) probabilistic
 		iii) drug resistance (evolution) 
-	b) trap
+	b) trap													
 		i) sticky pad
 	c) 
 
