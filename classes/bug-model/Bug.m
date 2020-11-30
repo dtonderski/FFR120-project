@@ -59,7 +59,7 @@ classdef Bug
             for i = 1:size(food_locations_in_house,1)
                 if (obj.x == food_locations_in_house(i,1)&&obj.y==food_locations_in_house(i,2))
                     obj.hunger = max(0,obj.hunger-1);
-                    food_lattice = food_lattice.remove_one_food(food_locations_in_house(i,:));
+                    food_lattice = food_lattice.remove_quantity_of_food(food_locations_in_house(i,:),1);
                     break;
                 end
             end
