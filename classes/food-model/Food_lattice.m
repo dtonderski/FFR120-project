@@ -59,11 +59,11 @@ classdef Food_lattice
 
         end
         
-        function obj = remove_one_food(obj,location)
+        function obj = remove_quantity_of_food(obj,location,food_quantity)
             current_food = obj.lattice(location(1), location(2));
             if current_food ~= 0
                 index = ismember(obj.food_locations, location, 'rows');
-                current_food = max(0,current_food - 1);
+                current_food = max(0,current_food - food_quantity);
                 obj.lattice(location(1), location(2)) = current_food;
                 if (current_food <= 0)
                     obj.food_locations(index, :) = [];
