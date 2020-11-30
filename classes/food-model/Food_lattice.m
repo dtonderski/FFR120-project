@@ -59,6 +59,19 @@ classdef Food_lattice
 
         end
         
+        function obj = remove_one_food(obj,location)
+            current_food = obj.lattice(location(1), location(2));
+            if current_food ~= 0
+                index = ismember(obj.food_locations, location, 'rows');
+                current_food = max(0,current_food - 1);
+                obj.lattice(location(1), location(2)) = current_food;
+                if (current_food <= 0)
+                    obj.food_locations(index, :) = [];
+                end                    
+            end
+
+        end
+        
         function p = show_food(obj, markerType, markerSize, color)
             n_locations = size(obj.food_locations,1);
             X = zeros(n_locations,1);
