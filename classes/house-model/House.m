@@ -33,6 +33,14 @@ classdef House
             obj.room_list(room_index) = room;
         end
         
+%         function obj = find_room(obj, room)
+%             for i_room = 1:length(obj.room_list)
+%                 if isequal(room.room_name, obj.room_list(i_room).room_name)
+%                     
+%                 
+%             
+%         end
+        
         function obj = add_room(obj, room)
             %METHOD1 Summary of this method goes here
             %   roomName  = string
