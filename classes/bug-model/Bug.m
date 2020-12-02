@@ -52,7 +52,6 @@ classdef Bug
             obj.age = obj.age + 1;
         end
         
-        % a new function
         function [obj,food_lattice] = consume(obj,food_lattice)
             obj.hunger = obj.hunger + 0.014;  % less than 12h not eat food bug will die
             food_locations_in_house = food_lattice.food_locations;
@@ -72,13 +71,12 @@ classdef Bug
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);
                 bug = bug.move(house, food_lattice, move_out_of_hiding_place_probability);
-                % add this line, can I add 'food_lattice' on the output part?
                 [bug,food_lattice] = bug.consume(food_lattice);
                 bug = bug.grow();
                 bug_list(bug_index) = bug;
-                if bug.age >= death_age || bug.hunger >= 1   % also make change here
+                if bug.age >= death_age || bug.hunger >= 1
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
-                elseif bug.age > reproduction_age
+                elseif bug.age > reproduction_age && bug.in_hiding_place
                     if rand < reproduction_probability
                         for i = 1:reproduction_number
                             bug_list = [bug_list, Bug(bug.x, bug.y, house)];
@@ -100,16 +98,18 @@ classdef Bug
 %             end
 %         end
         
-        function p = show_bugs(bug_list, marker_type, marker_size, color)
+        function p = show_bugs(bug_list, marker_type, marker_size)
             n_bugs = length(bug_list);
             X = zeros(1, n_bugs);
             Y = zeros(1, n_bugs);
+            cmap = colormap(summer(101));
             for i = 1:n_bugs
                 bug = bug_list(i);
                 X(i) = bug.x;
                 Y(i) = bug.y;
+                color(i,:) = cmap(bug.age+1,:);
             end
-            p = scatter(X,Y,marker_size,marker_type,color);
+            p = scatter(X,Y,marker_size,color,marker_type);
         end
     end
 end
