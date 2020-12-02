@@ -53,7 +53,7 @@ reproduction_probability = 0.01;
 
 [p1, p2, p3] = show_all(house, human_list, food_lattice, bug_list);
 
-for t = 1:40
+for t = 1:150
     [bug_list, food_lattice] = Bug.update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability);
     % show_all(house, human_list, food_lattice, bug_list);
     
@@ -76,7 +76,7 @@ function [p1, p2, p3] = show_all(house, human_list, food_lattice, bug_list)
     house.show_house();
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
     p2 = food_lattice.show_food('.', 1000, 'blue');
-    p3 = Bug.show_bugs(bug_list, '.', 1000, 'green');
+    p3 = Bug.show_bugs(bug_list, '.', 1000);
 end
 
 function [p1, p2, p3] = update_plot(human_list, food_lattice, bug_list, p1, p2, p3)
@@ -86,7 +86,7 @@ function [p1, p2, p3] = update_plot(human_list, food_lattice, bug_list, p1, p2, 
     delete(p3);
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
     p2 = food_lattice.show_food('.', 1000, 'blue');
-    p3 = Bug.show_bugs(bug_list, '.', 1000, 'green');
+    p3 = Bug.show_bugs(bug_list, '.', 1000);
     
 end
 
