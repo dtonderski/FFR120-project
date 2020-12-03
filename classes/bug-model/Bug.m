@@ -6,7 +6,7 @@ classdef Bug
     % in_hiding_place - boolean that says whether a bug is currently in a
     %                   hiding place
     % drug_resistance
-    % egg_list
+    % reproduce_procedure
     
     properties
         x {mustBeNumeric}
@@ -15,8 +15,8 @@ classdef Bug
         hunger {mustBeNumeric}
         in_hiding_place
         drug_resistance {mustBeNumeric}
-        egg_list
         reproduce_procedure {mustBeNumeric}
+        
     end
     
     methods
@@ -68,24 +68,14 @@ classdef Bug
             end
         end
         
-        % add
-        function obj = reproduce(obj,reproduction_age,reproduction_hunger,maxEggs,reproduction_probability)
-            if obj.age > reproduction_age && obj.in_hiding_place && obj.hunger < reproduction_hunger && obj.reproduce_procedure == 0
-                if rand < reproduction_probability
-                    numberOfEggs = randi(maxEggs);
-                    obj.egg_list = zeros(numberOfEggs,1);
-                    obj.reproduce_procedure = 1;
-                end
-            end
+        function egg = lay_eggs(obj, quantity)
+            egg = Egg(obj.x,obj.y,quantity);
         end
         
-        function obj = egg_hatch(obj)
-            obj.egg_list = obj.egg_list + 1;
-        end
     end
     
     methods(Static)
-        function [bug_list,food_lattice] = update_bugs(bug_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, hatch_probability, hatch_age, death_age, death_hunger, house, food_lattice, move_out_of_hiding_place_probability)
+        function [bug_list,egg_list,food_lattice] = update_bugs(bug_list, egg_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, house, food_lattice, move_out_of_hiding_place_probability)
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);
@@ -95,20 +85,13 @@ classdef Bug
                 if bug.age >= death_age || bug.hunger >= death_hunger
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
                 end
-                
-                % add
-                if bug.reproduce_procedure == 1
-                    bug = bug.egg_hatch;
-                    for i = 1:size(bug.egg_list,1)
-                        if bug.egg_list(i) == hatch_age
-                            if rand < hatch_probability
-                                bug_list = [bug_list, Bug(bug.x, bug.y, house)];
-                            end
-                            bug.reproduce_procedure = 2;
-                        end
+                if bug.age > reproduction_age && bug.in_hiding_place && bug.hunger < reproduction_hunger
+                    if rand < reproduction_probability                    
+                        numberOfEggs = randi(maxEggs);
+                        egg = bug.lay_eggs(numberOfEggs);
+                        egg_list = [egg_list,egg];
                     end
                 end
-                bug = bug.reproduce(reproduction_age,reproduction_hunger,maxEggs,reproduction_probability);
                 bug_list(bug_index) = bug;
             end
             bug_list(bugs_to_kill_indices) = [];
@@ -118,6 +101,7 @@ classdef Bug
             n_bugs = length(bug_list);
             X = zeros(1, n_bugs);
             Y = zeros(1, n_bugs);
+            color(1,:) = [1 1 1];
             cmap = colormap(summer(101));
             for i = 1:n_bugs
                 bug = bug_list(i);
