@@ -5,7 +5,7 @@ classdef Bug
     % hunger          - bug dies when hunger reaches some value
     % in_hiding_place - boolean that says whether a bug is currently in a
     %                   hiding place
-    % drug_resistance
+    % drug_resistance - probability that bug resists pesticide
     % egg_list
     
     properties
