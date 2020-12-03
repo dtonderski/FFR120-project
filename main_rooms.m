@@ -45,16 +45,20 @@ food_lattice = Food_lattice(house);
 breakfast_probability = 0.9;
 
 
-reproduction_age = 1;
+reproduction_age = 20;
+reproduction_hunger = 0.4;
+death_hunger = 1;
+maxEggs = 10;
+hatch_age = 10;
+reproduction_probability = 0.1;
+hatch_probability = 0.3;
 death_age = 100;
-reproduction_number = 1;
 move_out_of_hiding_place_probability = 0.1;
-reproduction_probability = 0.01;
 
 [p1, p2, p3] = show_all(house, human_list, food_lattice, bug_list);
 
 for t = 1:150
-    [bug_list, food_lattice] = Bug.update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability);
+    [bug_list, food_lattice] = Bug.update_bugs(bug_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, hatch_probability, hatch_age, death_age, death_hunger, house, food_lattice, move_out_of_hiding_place_probability);
     % show_all(house, human_list, food_lattice, bug_list);
     
     % human behaviour should depend on the time instead of probabilty

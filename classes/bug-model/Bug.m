@@ -5,7 +5,8 @@ classdef Bug
     % hunger          - bug dies when hunger reaches some value
     % in_hiding_place - boolean that says whether a bug is currently in a
     %                   hiding place
-    % drug resistance
+    % drug_resistance
+    % egg_list
     
     properties
         x {mustBeNumeric}
@@ -14,6 +15,8 @@ classdef Bug
         hunger {mustBeNumeric}
         in_hiding_place
         drug_resistance {mustBeNumeric}
+        egg_list
+        reproduce_procedure {mustBeNumeric}
     end
     
     methods
@@ -23,6 +26,7 @@ classdef Bug
             obj.age = 0;
             obj.hunger = 0;
             obj.in_hiding_place = house.is_hiding_place(x,y);
+            obj.reproduce_procedure = 0;
         end
         
         function obj = move(obj, house, food_lattice, moveOutOfHidingPlaceProbability)
@@ -40,13 +44,13 @@ classdef Bug
                 hiding_place_index = randi([1, size(house.hiding_places, 1)]);
                 new_location_x = randi(house.hiding_places(hiding_place_index, [1 3]));
                 new_location_y = randi(house.hiding_places(hiding_place_index, [2 4]));
-                obj.x = new_location_x; 
+                obj.x = new_location_x;
                 obj.y = new_location_y;
                 obj.in_hiding_place = true;
             end
             
         end
-
+        
         function obj = grow(obj)
             
             obj.age = obj.age + 1;
@@ -63,40 +67,52 @@ classdef Bug
                 end
             end
         end
+        
+        % add
+        function obj = reproduce(obj,reproduction_age,reproduction_hunger,maxEggs,reproduction_probability)
+            if obj.age > reproduction_age && obj.in_hiding_place && obj.hunger < reproduction_hunger && obj.reproduce_procedure == 0
+                if rand < reproduction_probability
+                    numberOfEggs = randi(maxEggs);
+                    obj.egg_list = zeros(numberOfEggs,1);
+                    obj.reproduce_procedure = 1;
+                end
+            end
+        end
+        
+        function obj = egg_hatch(obj)
+            obj.egg_list = obj.egg_list + 1;
+        end
     end
     
     methods(Static)
-        function [bug_list,food_lattice] = update_bugs(bug_list, reproduction_age, death_age,  reproduction_number, house, food_lattice, move_out_of_hiding_place_probability, reproduction_probability)
+        function [bug_list,food_lattice] = update_bugs(bug_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, hatch_probability, hatch_age, death_age, death_hunger, house, food_lattice, move_out_of_hiding_place_probability)
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);
                 bug = bug.move(house, food_lattice, move_out_of_hiding_place_probability);
                 [bug,food_lattice] = bug.consume(food_lattice);
                 bug = bug.grow();
-                bug_list(bug_index) = bug;
-                if bug.age >= death_age || bug.hunger >= 1
+                if bug.age >= death_age || bug.hunger >= death_hunger
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
-                elseif bug.age > reproduction_age && bug.in_hiding_place
-                    if rand < reproduction_probability
-                        for i = 1:reproduction_number
-                            bug_list = [bug_list, Bug(bug.x, bug.y, house)];
+                end
+                
+                % add
+                if bug.reproduce_procedure == 1
+                    bug = bug.egg_hatch;
+                    for i = 1:size(bug.egg_list,1)
+                        if bug.egg_list(i) == hatch_age
+                            if rand < hatch_probability
+                                bug_list = [bug_list, Bug(bug.x, bug.y, house)];
+                            end
+                            bug.reproduce_procedure = 2;
                         end
                     end
                 end
+                bug = bug.reproduce(reproduction_age,reproduction_hunger,maxEggs,reproduction_probability);
+                bug_list(bug_index) = bug;
             end
             bug_list(bugs_to_kill_indices) = [];
         end
-        
-%         % add this part
-%         function bug_locations_in_area = get_bug_locations_in_area(bug_list, room)
-%             bug_locations_in_area = [];
-%             for i_bug_location = 1:size(bug_list, 1)
-%                 bug_location = bug_list(i_bug_location,:);
-%                 if all(bug_location <= room.room_stop_house & bug_location >= room.room_start_house)
-%                     bug_locations_in_area = [bug_locations_in_area; bug_location(1), bug_location(2)];
-%                 end
-%             end
-%         end
         
         function p = show_bugs(bug_list, marker_type, marker_size)
             n_bugs = length(bug_list);
