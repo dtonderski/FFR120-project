@@ -141,6 +141,11 @@ classdef House
             food_locations_in_room = food_lattice.get_food_locations_in_area(current_room.room_start_house, current_room.room_stop_house);
         end
         
+        function free_sticky_pad_locations_in_room = get_free_sticky_pad_locations_in_current_room(obj, x, y, sticky_pads)
+            current_room = obj.room_list(obj.lattice_with_rooms(x,y));
+            free_sticky_pad_locations_in_room = sticky_pads.get_free_sticky_pad_locations_in_area(current_room.room_start_house, current_room.room_stop_house);
+        end
+        
         function hidden = is_hiding_place(obj, x, y)
             room_number = obj.lattice_with_rooms(x,y);
             
@@ -149,33 +154,9 @@ classdef House
                 return
             else
                 room = obj.room_list(room_number);
-                hidden = room.is_traversable(x,y);
+                hidden = room.is_hiding_place(x,y);
             end
         end
-        
-        
-        
-%         function show_house(obj)
-%             lattice = obj.lattice_with_rooms;
-%             latticeToShow = ones([size(lattice),3]);
-%             [row, col] = find(lattice == -1);
-%             latticeToShow(row, col, :) = 0;
-%             
-%             for iRoom = 1:length(obj.room_list)
-%                 [row, col] = find(lattice == iRoom);
-%                 latticeToShow(row, col, :) = iRoom/(length(obj.room_list)+1);
-%             end
-%             imshow(flipud(permute(latticeToShow, [2,1,3])), 'InitialMagnification', 'fit')
-% 
-%             for iRoom = 1:length(obj.room_list)
-%                 [row, col] = find(lattice == iRoom);
-%                 x_pos = mean(row);
-%                 y_pos = obj.y_size - mean(col) + 1;
-%                 
-%                 room = obj.room_list(iRoom);
-%                 text(x_pos, y_pos, room.room_name, 'HorizontalAlignment','center', 'VerticalAlignment', 'middle');
-%             end
-%         end
         
 
     end
