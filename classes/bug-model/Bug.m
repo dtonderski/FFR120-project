@@ -17,7 +17,7 @@ classdef Bug
         in_hiding_place
         drug_resistance {mustBeNumeric}
         reproduce_procedure {mustBeNumeric}
-        
+        on_sticky_pad
     end
     
     methods
@@ -28,17 +28,28 @@ classdef Bug
             obj.hunger = 0;
             obj.in_hiding_place = house.is_hiding_place(x,y);
             obj.reproduce_procedure = 0;
+            obj.on_sticky_pad = 0;
         end
         
-        function obj = move(obj, house, food_lattice, moveOutOfHidingPlaceProbability)
-            if obj.in_hiding_place
+        function [obj, sticky_pads] = move(obj, house, food_lattice, sticky_pads, moveOutOfHidingPlaceProbability)
+            if obj.on_sticky_pad
+                return
+            elseif obj.in_hiding_place
                 if rand < moveOutOfHidingPlaceProbability
                     food_locations_in_room = house.get_food_locations_in_current_room(obj.x, obj.y, food_lattice);
-                    if ~isempty(food_locations_in_room)
-                        food_location_index = randi([1, size(food_locations_in_room, 1)]);
-                        obj.x = food_locations_in_room(food_location_index, 1);
-                        obj.y = food_locations_in_room(food_location_index, 2);
-                        obj.in_hiding_place = false;
+                    free_sticky_pad_locations_in_room = house.get_free_sticky_pad_locations_in_current_room(obj.x, obj.y, sticky_pads); 
+                    locations = [free_sticky_pad_locations_in_room;food_locations_in_room];
+                    n_pads = size(free_sticky_pad_locations_in_room, 1);
+                    
+                    if ~isempty(locations)
+                        location_index = randi([1, n_pads + size(food_locations_in_room, 1)]);
+                        obj.x = locations(location_index, 1);
+                        obj.y = locations(location_index, 2);
+                        obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
+                        if location_index <= n_pads
+                            obj.on_sticky_pad = true;
+                            sticky_pads = sticky_pads.add_bug_to_sticky_pad([obj.x, obj.y]);
+                        end
                     end
                 end
             else
@@ -76,11 +87,11 @@ classdef Bug
     end
     
     methods(Static)
-        function [bug_list,egg_list,food_lattice] = update_bugs(bug_list, egg_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, house, food_lattice, move_out_of_hiding_place_probability)
+        function [bug_list,egg_list,food_lattice, sticky_pads] = update_bugs(bug_list, egg_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability)
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);
-                bug = bug.move(house, food_lattice, move_out_of_hiding_place_probability);
+                [bug, sticky_pads] = bug.move(house, food_lattice,sticky_pads, move_out_of_hiding_place_probability);
                 [bug,food_lattice] = bug.consume(food_lattice);
                 bug = bug.grow();
                 if bug.age >= death_age || bug.hunger >= death_hunger

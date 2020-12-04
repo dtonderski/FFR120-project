@@ -2,6 +2,8 @@ addpath('classes/house-model')
 addpath('classes/human-model')
 addpath('classes/bug-model')
 addpath('classes/food-model')
+addpath('classes/bug-control-model')
+
 
 
 clear all
@@ -42,6 +44,9 @@ bug_list = [bug1, bug2];
 egg = Egg(0,0,0);
 egg_list = [egg];
 
+sticky_pads = Sticky_pads(house);
+sticky_pads = sticky_pads.add_sticky_pad([15,15]);
+
 food_lattice = Food_lattice(house);
 %food_lattice = human1.litter(food_lattice, 100, 4);
 
@@ -57,10 +62,10 @@ hatch_probability = 0.1;
 death_age = 100;
 move_out_of_hiding_place_probability = 0.1;
 
-[p1, p2, p3, p4] = show_all(house, human_list, food_lattice, bug_list, egg_list);
+[p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads);
 
 for t = 1:150
-    [bug_list, egg_list, food_lattice] = Bug.update_bugs(bug_list, egg_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, house, food_lattice, move_out_of_hiding_place_probability);
+    [bug_list, egg_list, food_lattice, sticky_pads] = Bug.update_bugs(bug_list, egg_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability);
     
     [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_age,hatch_probability,house);
 
@@ -69,36 +74,39 @@ for t = 1:150
     % human behaviour should depend on the time instead of probabilty
     [human_list, food_lattice] = Human.update_humans(human_list, bedroom1, kitchen, livingarea, hallway, food_lattice, breakfast_probability);
     
-    [p1, p2, p3, p4] = update_plot(human_list, food_lattice, bug_list, egg_list, p1, p2, p3, p4);
+    [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5);
     
     title(sprintf('$t = %d, n_{bugs} = %d$', t, length(bug_list)), 'interpreter', 'latex');
     if length(bug_list) < 1 && length(egg_list) < 1
         break
     end
     %disp(max(max(food_lattice.lattice)))
-    pause(0.1)
+    shg
 end
 
-function [p1, p2, p3, p4] = show_all(house, human_list, food_lattice, bug_list, egg_list)
+function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads)
     clf
     hold on
     house.show_house();
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
     p2 = food_lattice.show_food('.', 1000, 'blue');
+    p5 = sticky_pads.show_pads('.', 1000, 'cyan');
     p3 = Bug.show_bugs(bug_list, '.', 1000);
     p4 = Egg.show_eggs(egg_list,'.',300);
 end
 
-function [p1, p2, p3, p4] = update_plot(human_list, food_lattice, bug_list, egg_list, p1, p2, p3, p4)
+function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5)
     hold on
     delete(p1);
     delete(p2);
     delete(p3);
     delete(p4);
+    delete(p5);
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
     p2 = food_lattice.show_food('.', 1000, 'blue');
+    p5 = sticky_pads.show_pads('.', 1000, 'cyan');
     p3 = Bug.show_bugs(bug_list, '.', 1000);
-    p4 = Egg.show_eggs(egg_list,'.',300);   
+    p4 = Egg.show_eggs(egg_list,'.',300);  
 end
 
 
