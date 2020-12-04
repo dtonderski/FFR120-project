@@ -14,22 +14,27 @@ classdef Human
     methods
         function obj = Human(room)
             obj.room = room;
-            obj.cycle = 0;
-            obj.day = 0;
         end
                 
         function obj = change_room(obj, room)
             obj.room = room;
         end
         
-        function obj = time(obj)    
-            obj.cycle = obj.cycle + 1;
+        
+        %%%  Should this be static methods or methods in the enviroment? %%% 
+        function time_step = get_time_step(obj, enviroment)
+            time_step = enviroment.time_step;
         end
         
-        function obj = increase_day(obj)
-            obj.day = obj.day +1;
+        function day = get_day(obj, enviroment)
+            day = enviroment.day;
         end
         
+        function week = get_week(obj, enviroment)
+            week = enviroment.week;
+        end
+        %%% %%% %%% %%% %%% 
+         
 
         function [food_lattice] = clean(obj, food_lattice)
             % works fine
@@ -42,30 +47,37 @@ classdef Human
     end
     
     methods(Static)
-%         
-        function [human_list, food_lattice] = update_humans(human_list, bedroom1, kitchen, livingarea, hallway, food_lattice, breakfast_probability)
+    
+        function [human_list, food_lattice, enviroment] = update_humans(human_list, house, enviroment, food_lattice)
             
+                enviroment = enviroment.increase_time();
+                enviroment = enviroment.determine_weekend();
+                
             for human_index = 1:length(human_list)
                 human = human_list(human_index);
-                human = human.time();
-                
-                if human.cycle <= 8 % divide with something appropriate to create a day cycle 
+%                 
+                if human.get_time_step(enviroment) <= 8 % divide with something appropriate to create a day cycle 
                       if human.room.room_name ~= "Bedroom 1"
-                          human = human.change_room(bedroom1);
+                          human = human.change_room(house.find_room("Bedroom 1"));
                       end
                 end
                 
-                if human.cycle <= 9 && human.cycle > 8
-                    human = human.change_room(kitchen);    
+                if human.get_time_step(enviroment) <= 9 && human.get_time_step(enviroment) > 8
+                    human = human.change_room(house.find_room("Kitchen"));    
                     food_lattice = human.litter(food_lattice, 100, 4);
+                    
+                    clean_r = rand;
+                    if clean_r <= 0.5
+                    food_lattice = human.clean(food_lattice);
+                    end
                 end 
               
-                if human.cycle <= 17 && human.cycle > 9
-                    human = human.change_room(hallway);
+                if human.get_time_step(enviroment) <= 17 && human.get_time_step(enviroment) > 9
+                    human = human.change_room(house.find_room("Out"));
                 end
                 
-                if human.cycle <= 24 && human.cycle > 17
-                    human = human.change_room(livingarea);
+                if human.get_time_step(enviroment) <= 24 && human.get_time_step(enviroment) > 17
+                    human = human.change_room(house.find_room("Living area"));
                     % generating food in the living area
                     r = rand;
                     if r <= 0.95
@@ -78,14 +90,17 @@ classdef Human
                     end
                 end
                 
-                if human.cycle/24 == 1
-                    human = human.increase_day();
-                    human.cycle = 0;
+                if mod(human.get_day(enviroment),7) == 0 && human.get_time_step(enviroment) > 23
+                    enviroment = enviroment.increase_week();
+                end
+                
+                if human.get_time_step(enviroment)/(24) == 1
+                    enviroment = enviroment.increase_day();
+                    enviroment.time_step = 0;
                 end
 
                 human_list(human_index) = human;
-
-                
+              
             end 
         end
         
