@@ -6,18 +6,23 @@ classdef Human
     
     properties
         room
-        sleeping
-        cycle
-        day
+        activity
+        time_active
     end
     
     methods
         function obj = Human(room)
             obj.room = room;
+            obj.activity = false;
+            obj.time_active = 0;
         end
                 
         function obj = change_room(obj, room)
             obj.room = room;
+        end
+        
+        function obj= active(obj,condition)
+            obj.activity = condition;
         end
         
         
@@ -48,62 +53,117 @@ classdef Human
     
     methods(Static)
     
-        function [human_list, food_lattice, enviroment] = update_humans(human_list, house, enviroment, food_lattice)
+        function [human_list, food_lattice, enviroment, randomActivity] = update_humans(human_list, house, enviroment, food_lattice, randomActivity)
             
                 enviroment = enviroment.increase_time();
                 enviroment = enviroment.determine_weekend();
+               
                 
             for human_index = 1:length(human_list)
                 human = human_list(human_index);
-%                 
-                if human.get_time_step(enviroment) <= 8 % divide with something appropriate to create a day cycle 
-                      if human.room.room_name ~= "Bedroom 1"
-                          human = human.change_room(house.find_room("Bedroom 1"));
-                      end
-                end
-                
-                if human.get_time_step(enviroment) <= 9 && human.get_time_step(enviroment) > 8
-                    human = human.change_room(house.find_room("Kitchen"));    
-                    food_lattice = human.litter(food_lattice, 100, 4);
+%               
+                if enviroment.weekend == false
                     
-                    clean_r = rand;
-                    if clean_r <= 0.5
-                    food_lattice = human.clean(food_lattice);
+                    if human.get_time_step(enviroment) <= 8 % divide with something appropriate to create a day cycle 
+                          if human.room.room_name ~= "Bedroom 1"
+                              human = human.change_room(house.find_room("Bedroom 1"));
+                          end
                     end
-                end 
-              
-                if human.get_time_step(enviroment) <= 17 && human.get_time_step(enviroment) > 9
-                    human = human.change_room(house.find_room("Out"));
-                end
                 
-                if human.get_time_step(enviroment) <= 24 && human.get_time_step(enviroment) > 17
-                    human = human.change_room(house.find_room("Living area"));
-                    % generating food in the living area
-                    r = rand;
-                    if r <= 0.95
+                    if human.get_time_step(enviroment) <= 9 && human.get_time_step(enviroment) > 8
+                        human = human.change_room(house.find_room("Kitchen"));    
                         food_lattice = human.litter(food_lattice, 100, 4);
-                    end 
-                    % probability of cleaning it up
-                    clean_r = rand;
-                    if clean_r <= 0.9
-                    food_lattice = human.clean(food_lattice);
-                    end
-                end
-                
-                if mod(human.get_day(enviroment),7) == 0 && human.get_time_step(enviroment) > 23
-                    enviroment = enviroment.increase_week();
-                end
-                
-                if human.get_time_step(enviroment)/(24) == 1
-                    enviroment = enviroment.increase_day();
-                    enviroment.time_step = 0;
-                end
 
+                        clean_r = rand;
+                        if clean_r <= 0.9
+                        food_lattice = human.clean(food_lattice);
+                        end
+                    end 
+
+                    if human.get_time_step(enviroment) <= 17 && human.get_time_step(enviroment) > 9
+                        human = human.change_room(house.find_room("Out"));
+                    end
+
+                    if human.get_time_step(enviroment) <= 24 && human.get_time_step(enviroment) > 17
+                        human = human.change_room(house.find_room("Living area"));
+                        % generating food in the living area
+                        r = rand;
+                        if r <= 0.95
+                            food_lattice = human.litter(food_lattice, 100, 4);
+                        end 
+                        % probability of cleaning it up
+                        clean_r = rand;
+                        if clean_r <= 0.9
+                        food_lattice = human.clean(food_lattice);
+                        end
+                    end
+
+
+                % behaviour during the weekend    
+                % assumptions : 
+                % NO CLEANING DURING WEEKEND
+                % Sleep a little longer
+                % instead of work have an activity
+                
+                else %(enviroment.weekend == true)
+                    if human.get_time_step(enviroment) <= 9 % * time_constant (add)
+                          if human.room.room_name ~= "Bedroom 1"
+                              human = human.change_room(house.find_room("Bedroom 1"));
+                          end
+                    end
+                    
+                    if human.get_time_step(enviroment) <= 10 && human.get_time_step(enviroment) > 9
+                        human = human.change_room(house.find_room("Kitchen"));    
+                        food_lattice = human.litter(food_lattice, 100, 4);
+                    end
+                    
+                    %%% ACTIVITY PART %%%
+                    if human.get_time_step(enviroment) <= 15 && human.get_time_step(enviroment) > 10
+                    % do something if the human is not doing anything
+                    if human.activity == false
+                        randomActivity = rand;
+                    end 
+                    
+                    if human.time_active < 5 && randomActivity > 0
+                    human = human.active(true);
+                    human = human.change_room(house.find_room("Out"));
+                    human.time_active = human.time_active +1; 
+                    
+                    else % if not then human comes home to do next task
+                        human = human.active(false);
+                        human = human.change_room(house.find_room("Hallway"));
+                    end
+                    
+                    end
+                    
+                    if human.get_time_step(enviroment) <= 24 && human.get_time_step(enviroment) > 15
+                        human = human.change_room(house.find_room("Bedroom 2"));
+                    end
+
+                    
+                end
+            
                 human_list(human_index) = human;
-              
             end 
+            
+            
+            % update the day and week
+            if human.get_day(enviroment)/7 == 1
+                enviroment = enviroment.increase_week();
+            end
+
+            if human.get_time_step(enviroment)/(24) == 1
+                enviroment = enviroment.increase_day();
+                enviroment.time_step = 0;
+            end
+            
         end
         
+        
+            
+            
+            
+            
         function p = show_humans(human_list, marker_type, marker_size, color)
             n_humans = length(human_list);
             X = zeros(1, n_humans);
