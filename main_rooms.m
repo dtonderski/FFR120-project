@@ -68,12 +68,10 @@ move_out_of_hiding_place_probability = 0.1;
 
 [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads);
 
-for t = 1:200
+for t = 1:100
     [bug_list, egg_list, food_lattice, sticky_pads] = Bug.update_bugs(bug_list, egg_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability);
     
     [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_age,hatch_probability,house);
-
-    % show_all(house, human_list, food_lattice, bug_list);
     
     % human behaviour should depend on the time instead of probabilty
     [human_list, food_lattice, enviroment] = Human.update_humans(human_list, house, enviroment, food_lattice);
@@ -84,8 +82,8 @@ for t = 1:200
     if length(bug_list) < 1 && length(egg_list) < 1
         break
     end
-    %disp(max(max(food_lattice.lattice)))
-    shg
+    pause(0.5)
+    %shg
 end
 
 function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads)

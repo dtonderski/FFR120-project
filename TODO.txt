@@ -1,19 +1,20 @@
 1. Bug behaviour
 	a) death (hunger or age)										(Ruxin) 	DONE
-	b) colour change (depending on age)									(Ruxin)
-	c) laying eggs (only in hiding spots)									(Ruxin)
+	b) colour change (depending on age)									(Ruxin)		DONE
+	c) laying eggs (only in hiding spots)									(Ruxin)		DONE
 		i)  depending on age
 		ii) random number of eggs (in what range? for now only 1, but should be a feature)
 	d) hunger												(Ruxin) 	DONE
 	e) moving between hiding places										(David)
+	f) random movement (not food) (also between rooms) (should depend on time)				(Ruxin)
 
-2. Human behaviour
+2. Human behaviour												(Joakim)
 	a) movement												(Joakim)	DONE											
 	b) cleaning												(Joakim)	DONE										
 	c) generating food											(Joakim)	DONE
 	d) go out of house											
 3. House
-	a) hiding spots												(David)
+	a) hiding spots												(Joakim)
 	b) design of the house											(Joakim)
 
 3. Food
@@ -21,11 +22,11 @@
 		i)  quantity (integer)
 	b) function to remove quantity of food									(David/Ruxin)	DONE
 
-4. Bug control													(David)		DONE										
+4. Bug control													(David)		
 	a) pesticide												
 		i) can be put in hiding spots
 		ii) probability
-	b) trap									
+	b) trap													(David) 	DONE						
 		i) sticky pad
 	c) 
 
@@ -37,5 +38,7 @@
 	a) time (step - 10 minutes)
 	b) night-day cycle
 	c) temperature / air humidity
-	d) light level
+
+7. Documentation
+	a) Write all parameters in parameters.txt
 
