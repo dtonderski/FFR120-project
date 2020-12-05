@@ -87,7 +87,7 @@ hatch_age = 30;
 reproduction_probability = 0.5;
 hatch_probability = 0.3;
 death_age = 100;
-move_out_of_hiding_place_probability = 0.1;
+move_out_of_hiding_place_probability = 0.01;
 move_randomly_at_day_probability = 0.1;
 move_randomly_at_night_probability = 0.9;
 
