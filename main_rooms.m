@@ -83,15 +83,17 @@ reproduction_hunger = 0.4;
 death_hunger = 1;
 maxEggs = 10;
 hatch_age = 30;
-reproduction_probability = 0.1;
-hatch_probability = 0.1;
+reproduction_probability = 0.5;
+hatch_probability = 0.3;
 death_age = 100;
-move_out_of_hiding_place_probability = 0.1;
+move_out_of_hiding_place_probability = 0.01;
+move_randomly_at_day_probability = 0.1;
+move_randomly_at_night_probability = 0.9;
 
 [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads);
 
 for t = 1:150
-    [bug_list, egg_list, food_lattice, sticky_pads] = Bug.update_bugs(bug_list, egg_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability);
+    [bug_list, egg_list, food_lattice, sticky_pads] = Bug.update_bugs(bug_list, egg_list, room_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, enviroment, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability, move_randomly_at_day_probability, move_randomly_at_night_probability);
     
     [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_age,hatch_probability,house);
     
@@ -101,9 +103,9 @@ for t = 1:150
     [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5);
     
     title(sprintf('$t = %d, n_{bugs} = %d$', t, length(bug_list)), 'interpreter', 'latex');
-%     if length(bug_list) < 1 && length(egg_list) < 1
-%         break
-%     end
+        if length(bug_list) < 1 && length(egg_list) < 1
+                break
+            end
     pause(0.1)
     %shg
 end
