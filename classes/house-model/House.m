@@ -160,5 +160,42 @@ classdef House
         
 
     end
+    
+    methods(Static)
+        function house = create_default_house(room_list)
+            house = House(100,100);
+            house = house.add_walls_around_house;
+            for room = room_list
+                house = house.add_room(room);
+            end
+
+            house = house.add_door([51, 21], [51, 31]);
+            house = house.add_door([30, 59], [35, 59]);
+            house = house.add_door([70, 59], [75, 59]);
+            house = house.add_door([83, 59], [88, 59]);
+            house = house.add_door([21, 47], [21, 52]);
+            house = house.add_door([60, 41], [80, 41]);
+
+            house = house.add_door([51, 21], [51, 31]);
+            house = house.add_door([30, 59], [35, 59]);
+            house = house.add_door([70, 59], [75, 59]);
+            house = house.add_door([83, 59], [88, 59]);
+            house = house.add_door([21, 47], [21, 52]);
+            house = house.add_door([60, 41], [80, 41]);
+
+            % kitchen
+            house = house.add_hiding_place([2 2], [8 40]);
+            house = house.add_hiding_place([9 2], [40 8]);
+            % toilet
+            house = house.add_hiding_place([81 90], [99 99]);
+            house = house.add_hiding_place([81 67], [84 83]);
+            house = house.add_hiding_place([93 60], [98 65]);
+
+
+            house = house.add_hiding_place([60 10], [70, 20]);
+            house = house.add_hiding_place([10 90], [20 95]);
+            
+        end
+    end
 end
 

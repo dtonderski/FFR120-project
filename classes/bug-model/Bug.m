@@ -28,7 +28,13 @@ classdef Bug
             obj.on_sticky_pad = 0;
         end
         
-        function [obj,sticky_pads] = random_move(obj,room_list,sticky_pads)
+        function [obj,sticky_pads] = random_move(obj,house,room_list,sticky_pads)
+            % implement probability to change room, otherwise random move within
+            % room
+            
+            if obj.on_sticky_pad
+                return
+            end
             room_index = randi(length(room_list)-1);
             room_start = room_list(room_index).room_start_house;
             room_stop = room_list(room_index).room_stop_house;
@@ -38,10 +44,10 @@ classdef Bug
                 obj.on_sticky_pad = true;
                 sticky_pads = sticky_pads.add_bug_to_sticky_pad([obj.x, obj.y]);
             end
+            obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
         end
 
-                        
-        function [obj, sticky_pads] = regular_move(obj, house, food_lattice, sticky_pads, moveOutOfHidingPlaceProbability)
+        function [obj, sticky_pads] = regular_move(obj, house, food_lattice, sticky_pads, moveOutOfHidingPlaceProbability)            
             if obj.on_sticky_pad
                 return
             elseif obj.in_hiding_place
@@ -63,6 +69,14 @@ classdef Bug
                     end
                 end
             else
+                % if rand < probability_to_change_room
+                %   choose room randomly
+                %   move to hiding place in room
+                % else if there is a hiding place in current room
+                %   move to hiding place in current room
+                % else
+                %   random_move              
+                
                 hiding_place_index = randi([1, size(house.hiding_places, 1)]);
                 new_location_x = randi(house.hiding_places(hiding_place_index, [1 3]));
                 new_location_y = randi(house.hiding_places(hiding_place_index, [2 4]));
@@ -72,8 +86,7 @@ classdef Bug
             end
             
         end
-                    
-            
+                          
         function obj = grow(obj)
             
             obj.age = obj.age + 1;
@@ -98,12 +111,12 @@ classdef Bug
     end
     
     methods(Static)
-        function [bug_list,egg_list,food_lattice, sticky_pads] = update_bugs(bug_list, egg_list, room_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, enviroment, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability, move_randomly_at_day_probability, move_randomly_at_night_probability)
+        function [bug_list,egg_list,food_lattice, sticky_pads] = update_bugs(bug_list, egg_list, room_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, environment, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability, move_randomly_at_day_probability, move_randomly_at_night_probability)
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);
-                if (enviroment.night && rand < move_randomly_at_night_probability) || (~enviroment.night && rand < move_randomly_at_day_probability)
-                    [bug, sticky_pads] = bug.random_move(room_list,sticky_pads);
+                if (environment.night && rand < move_randomly_at_night_probability) || (~environment.night && rand < move_randomly_at_day_probability)
+                    [bug, sticky_pads] = bug.random_move(house,room_list,sticky_pads);
                 else
                     [bug, sticky_pads] = bug.regular_move(house, food_lattice,sticky_pads, move_out_of_hiding_place_probability);
                 end

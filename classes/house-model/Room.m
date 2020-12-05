@@ -93,5 +93,22 @@ classdef Room
         end
         
     end
+    
+    methods(Static)
+        
+        function room_list = create_deafult_room_list()
+            kitchen  = Room("Kitchen", [2,2], [50, 40], [1 1 1]);
+            bedroom1 = Room("Bedroom 1", [2, 60], [40, 99], [1 1 1]);
+            bedroom2 = Room("Bedroom 2", [41, 60], [80, 99], [1 1 1]);
+            toilet   = Room("Toilet", [81,60], [99, 99], [1 1 1]);
+            closet   = Room("Closet", [2,42], [20, 58], [1 1 1]);
+            livingarea = Room("Living area", [52,2], [99, 40], [1 1 1]);
+            hallway = Room("Hallway", [22,42], [99, 58], [1 1 1]);
+            % Must be last!
+            outside = Room("Out", [91,42], [99, 58], [1 1 1]);
+            
+            room_list = [kitchen, bedroom1, bedroom2, toilet, closet, livingarea, hallway, outside];
+        end
+    end
 end
 

@@ -1,4 +1,4 @@
-classdef Enviroment
+classdef Environment
     %ENVIROMENT Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -13,7 +13,7 @@ classdef Enviroment
     end
     
     methods
-        function obj = Enviroment(house)
+        function obj = Environment(house)
             obj.house = house;
             obj.time_step = 0;
             obj.day = 1;
