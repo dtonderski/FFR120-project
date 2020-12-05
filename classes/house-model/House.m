@@ -70,7 +70,7 @@ classdef House
         end
         
         function obj = add_hiding_place(obj, hiding_place_start, hiding_place_stop)
-            i_room = obj.lattice_with_rooms(hiding_place_start(1), hiding_place_stop(1));
+            i_room = obj.lattice_with_rooms(hiding_place_start(1), hiding_place_start(2));
             if ~all(obj.lattice_with_rooms(hiding_place_start(1):hiding_place_stop(1),...
                     hiding_place_start(2):hiding_place_stop(2)) == i_room)
                 error('A hiding place cannot span multiple rooms/walls/doors!')

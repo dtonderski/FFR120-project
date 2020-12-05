@@ -50,10 +50,9 @@ house = house.add_hiding_place([81 90], [99 99]);
 house = house.add_hiding_place([81 67], [84 83]);
 house = house.add_hiding_place([93 60], [98 65]);
 
-% Cant add these, not sure why??
-% living area
-%house = house.add_hiding_place([60 10], [70, 20]);
 
+house.show_house()
+house = house.add_hiding_place([60 10], [70, 20]);
 % bedroom1 
 %house = house.add_hiding_place([10 90], [20 95]);
 
