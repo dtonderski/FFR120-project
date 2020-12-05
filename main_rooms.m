@@ -97,7 +97,7 @@ for t = 1:150
     [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_age,hatch_probability,house);
     
     % human behaviour should depend on the time instead of probabilty
-    [human_list, food_lattice, enviroment, randomActivity] = Human.update_humans(human_list, house, enviroment, food_lattice, randomActivity);
+    [human_list, food_lattice, enviroment] = Human.update_humans(human_list, house, enviroment, food_lattice);
     
     [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5);
     
