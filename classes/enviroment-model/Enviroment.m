@@ -16,7 +16,7 @@ classdef Enviroment
         function obj = Enviroment(house)
             obj.house = house;
             obj.time_step = 0;
-            obj.day = 0;
+            obj.day = 1;
             obj.week = 0;
             obj.night = false;
             obj.weekend = false;
