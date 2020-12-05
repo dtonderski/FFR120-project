@@ -6,8 +6,7 @@ classdef Bug
     % in_hiding_place - boolean that says whether a bug is currently in a
     %                   hiding place
     % drug_resistance - probability that bug resists pesticide
-    % reproduce_procedure
-    % egg_list
+    % on_sticky_pad
     
     properties
         x {mustBeNumeric}
@@ -16,7 +15,6 @@ classdef Bug
         hunger {mustBeNumeric}
         in_hiding_place
         drug_resistance {mustBeNumeric}
-        reproduce_procedure {mustBeNumeric}
         on_sticky_pad
     end
     
@@ -27,11 +25,23 @@ classdef Bug
             obj.age = 0;
             obj.hunger = 0;
             obj.in_hiding_place = house.is_hiding_place(x,y);
-            obj.reproduce_procedure = 0;
             obj.on_sticky_pad = 0;
         end
         
-        function [obj, sticky_pads] = move(obj, house, food_lattice, sticky_pads, moveOutOfHidingPlaceProbability)
+        function [obj,sticky_pads] = random_move(obj,room_list,sticky_pads)
+            room_index = randi(length(room_list)-1);
+            room_start = room_list(room_index).room_start_house;
+            room_stop = room_list(room_index).room_stop_house;
+            obj.x = room_start(1) + fix(rand * (room_stop(1) - room_start(1)) + 1);
+            obj.y = room_start(2) + fix(rand * (room_stop(2) - room_start(2)) + 1);
+            if sticky_pads.lattice(obj.x,obj.y) > 0 
+                obj.on_sticky_pad = true;
+                sticky_pads = sticky_pads.add_bug_to_sticky_pad([obj.x, obj.y]);
+            end
+        end
+
+                        
+        function [obj, sticky_pads] = regular_move(obj, house, food_lattice, sticky_pads, moveOutOfHidingPlaceProbability)
             if obj.on_sticky_pad
                 return
             elseif obj.in_hiding_place
@@ -62,7 +72,8 @@ classdef Bug
             end
             
         end
-        
+                    
+            
         function obj = grow(obj)
             
             obj.age = obj.age + 1;
@@ -87,11 +98,15 @@ classdef Bug
     end
     
     methods(Static)
-        function [bug_list,egg_list,food_lattice, sticky_pads] = update_bugs(bug_list, egg_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability)
+        function [bug_list,egg_list,food_lattice, sticky_pads] = update_bugs(bug_list, egg_list, room_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, enviroment, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability, move_randomly_at_day_probability, move_randomly_at_night_probability)
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);
-                [bug, sticky_pads] = bug.move(house, food_lattice,sticky_pads, move_out_of_hiding_place_probability);
+                if (enviroment.night && rand < move_randomly_at_night_probability) || (~enviroment.night && rand < move_randomly_at_day_probability)
+                    [bug, sticky_pads] = bug.random_move(room_list,sticky_pads);
+                else
+                    [bug, sticky_pads] = bug.regular_move(house, food_lattice,sticky_pads, move_out_of_hiding_place_probability);
+                end
                 [bug,food_lattice] = bug.consume(food_lattice);
                 bug = bug.grow();
                 if bug.age >= death_age || bug.hunger >= death_hunger

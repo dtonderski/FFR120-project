@@ -84,10 +84,12 @@ reproduction_hunger = 0.4;
 death_hunger = 1;
 maxEggs = 10;
 hatch_age = 30;
-reproduction_probability = 0.1;
-hatch_probability = 0.1;
+reproduction_probability = 0.5;
+hatch_probability = 0.3;
 death_age = 100;
 move_out_of_hiding_place_probability = 0.1;
+move_randomly_at_day_probability = 0.1;
+move_randomly_at_night_probability = 0.9;
 
 [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads);
 
