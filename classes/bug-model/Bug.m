@@ -28,26 +28,28 @@ classdef Bug
             obj.on_sticky_pad = 0;
         end
         
+        function [current_room,change_room_index] = change_room(obj,room_list,house)
+            current_room = house.room_list(house.lattice_with_rooms(obj.x,obj.y));
+            choose_two_room = randperm(length(room_list)-1,2);
+            if isequal(current_room.room_name, room_list(choose_two_room(1)).room_name)
+                change_room_index = choose_two_room(2);
+            else
+                change_room_index = choose_two_room(1);
+            end           
+        end
+        
         function [obj,sticky_pads] = random_move(obj,house,room_list,sticky_pads,change_room_probability)
             if obj.on_sticky_pad
                 return
             end
-            
-            current_room = house.room_list(house.lattice_with_rooms(obj.x,obj.y));
-            if rand < change_room_probability
-                choose_two_room = randperm(length(room_list)-1,2);                
-                if isequal(current_room.room_name, room_list(choose_two_room(1)).room_name)
-                    room_index = choose_two_room(2);
-                else
-                    room_index = choose_two_room(1);
-                end
-                room_start = room_list(room_index).room_start_house;
-                room_stop = room_list(room_index).room_stop_house;            
+            [current_room,change_room_index] = change_room(obj,room_list,house);
+            if rand < change_room_probability 
+                room_start = room_list(change_room_index).room_start_house;
+                room_stop = room_list(change_room_index).room_stop_house;            
             else
                 room_start = current_room.room_start_house;
                 room_stop = current_room.room_stop_house;
-            end
-            
+            end            
             obj.x = room_start(1) + fix(rand * (room_stop(1) - room_start(1)) + 1);
             obj.y = room_start(2) + fix(rand * (room_stop(2) - room_start(2)) + 1);
             if sticky_pads.lattice(obj.x,obj.y) > 0 
