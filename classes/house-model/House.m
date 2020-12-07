@@ -158,6 +158,18 @@ classdef House
             end
         end
         
+        function [locations_x, locations_y] = get_hidden_locations_in_room(obj, room_name)
+            for room = obj.room_list
+                if isequal(room.room_name, room_name)
+                    [locations_x, locations_y] = find(room.lattice_with_furniture == -1);
+                    locations_x = locations_x + room.room_start_house(1) - 1;
+                    locations_y = locations_y + room.room_start_house(2) - 1;
+                    return
+                end
+            end
+            error('No room called %s found in house!', room_name);
+        end
+        
 
     end
     

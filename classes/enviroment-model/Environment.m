@@ -54,10 +54,6 @@ classdef Environment
             end
             
         end
-            
-
-        
-        
     end
 end
 

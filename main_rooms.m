@@ -17,9 +17,9 @@ human1 = Human(house.find_room("Living area"));
 
 human_list = [human1]; %human2]%, human3];
 
-bug1 = Bug(20, 20, house);
+bug1 = Bug(20, 30, house);
 bug2 = Bug(35, 40, house);
-bug_list = [bug1, bug2];
+bug_list = [bug1,bug2];
 
 egg = Egg(0,0,0);
 egg_list = [egg];
@@ -33,23 +33,30 @@ food_lattice = Food_lattice(house);
 environment = Environment(house);
 randomActivity = 0;
 
-reproduction_age = 20;
+reproduction_age = 1;
 reproduction_hunger = 0.4;
 death_hunger = 1;
 maxEggs = 10;
 hatch_age = 30;
-reproduction_probability = 0.5;
+reproduction_probability = 0;
 hatch_probability = 0.3;
-death_age = 100;
-move_out_of_hiding_place_probability = 0.1;
+death_age = 500;
+move_out_of_hiding_probability = 0.1;
 move_randomly_at_day_probability = 0.01;
-move_randomly_at_night_probability = 0.9;
-change_room_probability = 0.1;
+move_randomly_at_night_probability = 1;
+change_room_probability = 0.01;
+change_rooms_if_no_food_probability = 1;
 
 [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads);
 
 for t = 1:150
-    [bug_list, egg_list, food_lattice, sticky_pads] = Bug.update_bugs(bug_list, egg_list, room_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, environment, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability, move_randomly_at_day_probability, move_randomly_at_night_probability,change_room_probability);
+    pause(0)
+
+    [bug_list, egg_list, food_lattice, sticky_pads] = Bug.update_bugs(bug_list, egg_list, room_list,        ...
+        reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger,  ...
+        environment, house, food_lattice, sticky_pads, move_out_of_hiding_probability,                      ...
+        move_randomly_at_day_probability, move_randomly_at_night_probability,change_room_probability,       ...
+        change_rooms_if_no_food_probability);
     
     [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_age,hatch_probability,house);
     
@@ -58,12 +65,11 @@ for t = 1:150
     
     [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5);
     
-    title(sprintf('$t = %d, n_{bugs} = %d$', t, length(bug_list)), 'interpreter', 'latex');
-        if length(bug_list) < 1 && length(egg_list) < 1
-                break
-            end
+    title(sprintf('$t = %d, n_{bugs} = %d$, night = %d', t, length(bug_list), environment.determine_night().night), 'interpreter', 'latex');
+    if length(bug_list) < 1 && length(egg_list) < 1
+            break
+    end
     pause(0.1)
-    %shg
 end
 
 function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads)
