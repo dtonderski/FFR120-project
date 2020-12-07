@@ -207,12 +207,12 @@ classdef Bug
             bug_list(bugs_to_kill_indices) = [];
         end
         
-        function p = show_bugs(bug_list, marker_type, marker_size)
+        function p = show_bugs(bug_list, marker_type, marker_size, death_age)
             n_bugs = length(bug_list);
             X = zeros(1, n_bugs);
             Y = zeros(1, n_bugs);
             color(1,:) = [1 1 1];
-            cmap = colormap(summer(101));
+            cmap = colormap(summer(death_age + 1));
             for i = 1:n_bugs
                 bug = bug_list(i);
                 X(i) = bug.x;
