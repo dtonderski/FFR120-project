@@ -203,9 +203,31 @@ classdef House
             house = house.add_hiding_place([81 67], [84 83]);
             house = house.add_hiding_place([93 60], [98 65]);
 
-
-            house = house.add_hiding_place([60 10], [70, 20]);
-            house = house.add_hiding_place([10 90], [20 95]);
+            % living area
+            house = house.add_hiding_place([55 5], [70, 15]);
+            house = house.add_hiding_place([82 5], [97 10]);
+            house = house.add_hiding_place([92 10], [97 20]);
+            house = house.add_hiding_place([82 32], [97 37]);
+            
+            % closet
+            house = house.add_hiding_place([2 42], [20 46]);
+            house = house.add_hiding_place([2 47], [5 53]);
+            house = house.add_hiding_place([2 54], [20 58]);
+           
+            
+            % bedroom1
+            house = house.add_hiding_place([2 85], [20 99]);
+            house = house.add_hiding_place([5 60], [25 65]);
+            
+            % bedroom2
+            house = house.add_hiding_place([41 85], [59 99]);
+            house = house.add_hiding_place([44 60], [64 65]);
+            
+            % hallway
+            house = house.add_hiding_place([44 55], [64 58]);
+ 
+           
+            
             
         end
     end

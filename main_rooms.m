@@ -11,11 +11,11 @@ room_list = Room.create_deafult_room_list();
 
 house = House.create_default_house(room_list);
 
-human1 = Human(house.find_room("Living area"));
-%human2 = Human(house.find_room("Bedroom 1"));
+human1 = Human(house.find_room("Living area"),1);
+human2 = Human(house.find_room("Kitchen"),2);
 %human3 = Human(house.find_room("Toilet"));
 
-human_list = [human1]; %human2]%, human3];
+human_list = [human1, human2]; %human2]%, human3];
 
 bug1 = Bug(20, 30, house);
 bug2 = Bug(35, 40, house);
@@ -30,7 +30,8 @@ sticky_pads = sticky_pads.add_sticky_pad([15,15]);
 food_lattice = Food_lattice(house);
 %food_lattice = human1.litter(food_lattice, 100, 4);
 
-environment = Environment(house);
+time_constant = 6; % time constant * 24 = time_step in 24 hours.
+environment = Environment(house, time_constant); 
 randomActivity = 0;
 
 reproduction_age = 1;
@@ -38,7 +39,7 @@ reproduction_hunger = 0.4;
 death_hunger = 1;
 maxEggs = 10;
 hatch_age = 30;
-reproduction_probability = 0.01;
+reproduction_probability = 0.1;
 hatch_probability = 0.3;
 death_age = 500;
 move_out_of_hiding_probability = 0.1;
@@ -49,7 +50,7 @@ change_rooms_if_no_food_probability = 1;
 
 [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads, death_age);
 
-for t = 1:300
+for t = 1:200
     tic
     [bug_list, egg_list, food_lattice, sticky_pads] = Bug.update_bugs(bug_list, egg_list, room_list,        ...
         reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger,  ...
@@ -68,6 +69,7 @@ for t = 1:300
     if length(bug_list) < 1 && length(egg_list) < 1
             break
     end
+    pause(0.2)
     shg;
 end
 
