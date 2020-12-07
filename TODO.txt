@@ -1,10 +1,17 @@
+0. Overall
+	a) work on main_realistic
+	b) age of first bugs - not zero
+	c) 
+
 1. Bug behaviour
-	a) moving between hiding places										(David)		
-	b) random movement (not food) (also between rooms) (should depend on time)				(Ruxin)		
-	c) fix regular_move											(David)
 	d) make realistic parameters (German cockroach (link in Slack))
 		i) when you find a source for a parameter, put the parameter, value and source 			(Ruxin)
 		into parameters.txt										
+	e) probability of bug changing room should be higher if there is not food in room			(David) DONE
+	f) bug shouldn't move out of hiding place if there are humans in the room				(David)				
+	g) all(?) movement probabilities should scale with hunger						(Ruxin)
+	h) change hunger part											(Ruxin) URGENT	
+	i) think about movement at night - should probably prioritize food					(David)			
 
 2. Human behaviour												(Joakim)
 									
@@ -20,12 +27,17 @@
 		ii) probability
 
 5. Statistics - what plots?
-	a) Bug density ( time )
-	b) Bug eradication time ( cleaning frequency )
+	a) Number of bugs ( time )
+	b) Heatmap of bug position
 
 6. Environment													(Joakim)
-	a) add time constant											(Joakim)
-	b) move environment updating to environment class							(Joakim)										
+	a) add time constant											(Joakim) URGENT
+	b) move environment updating to environment class							(Joakim)	
+									
 7. Documentation
 	a) Write all parameters in parameters.txt								
+
+8. Possible optimizations
+	a) house.get_food_locations_in_current_room could be optimized, as the bug now knows which room it is in
+	b) change house class so that room_list variable is consistent (separate wall_list and door_list, for example)
 

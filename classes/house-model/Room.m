@@ -36,9 +36,6 @@ classdef Room
             
             obj.lattice_with_furniture(hiding_place_start_room(1):hiding_place_stop_room(1),...
                                        hiding_place_start_room(2):hiding_place_stop_room(2)) = -1;
-                                   
-            
-                                   
         end
         
         function traversable = is_traversable(obj, x, y)
@@ -103,9 +100,9 @@ classdef Room
             toilet   = Room("Toilet", [81,60], [99, 99], [1 1 1]);
             closet   = Room("Closet", [2,42], [20, 58], [1 1 1]);
             livingarea = Room("Living area", [52,2], [99, 40], [1 1 1]);
-            hallway = Room("Hallway", [22,42], [99, 58], [1 1 1]);
+            hallway = Room("Hallway", [22,42], [90, 58], [1 1 1]);
             % Must be last!
-            outside = Room("Out", [91,42], [99, 58], [1 1 1]);
+            outside = Room("Out", [92,42], [99, 58], [1 1 1]);
             
             room_list = [kitchen, bedroom1, bedroom2, toilet, closet, livingarea, hallway, outside];
         end
