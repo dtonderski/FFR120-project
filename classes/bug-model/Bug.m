@@ -28,16 +28,28 @@ classdef Bug
             obj.on_sticky_pad = 0;
         end
         
-        function [obj,sticky_pads] = random_move(obj,house,room_list,sticky_pads)
-            % implement probability to change room, otherwise random move within
-            % room
-            
+        function [current_room,change_room_index] = change_room(obj,room_list,house)
+            current_room = house.room_list(house.lattice_with_rooms(obj.x,obj.y));
+            choose_two_room = randperm(length(room_list)-1,2);
+            if isequal(current_room.room_name, room_list(choose_two_room(1)).room_name)
+                change_room_index = choose_two_room(2);
+            else
+                change_room_index = choose_two_room(1);
+            end           
+        end
+        
+        function [obj,sticky_pads] = random_move(obj,house,room_list,sticky_pads,change_room_probability)
             if obj.on_sticky_pad
                 return
             end
-            room_index = randi(length(room_list)-1);
-            room_start = room_list(room_index).room_start_house;
-            room_stop = room_list(room_index).room_stop_house;
+            [current_room,change_room_index] = change_room(obj,room_list,house);
+            if rand < change_room_probability 
+                room_start = room_list(change_room_index).room_start_house;
+                room_stop = room_list(change_room_index).room_stop_house;            
+            else
+                room_start = current_room.room_start_house;
+                room_stop = current_room.room_stop_house;
+            end            
             obj.x = room_start(1) + fix(rand * (room_stop(1) - room_start(1)) + 1);
             obj.y = room_start(2) + fix(rand * (room_stop(2) - room_start(2)) + 1);
             if sticky_pads.lattice(obj.x,obj.y) > 0 
@@ -111,12 +123,12 @@ classdef Bug
     end
     
     methods(Static)
-        function [bug_list,egg_list,food_lattice, sticky_pads] = update_bugs(bug_list, egg_list, room_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, environment, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability, move_randomly_at_day_probability, move_randomly_at_night_probability)
+        function [bug_list,egg_list,food_lattice, sticky_pads] = update_bugs(bug_list, egg_list, room_list, reproduction_age, reproduction_probability, reproduction_hunger, maxEggs, death_age, death_hunger, environment, house, food_lattice, sticky_pads, move_out_of_hiding_place_probability, move_randomly_at_day_probability, move_randomly_at_night_probability,change_room_probability)
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);
                 if (environment.night && rand < move_randomly_at_night_probability) || (~environment.night && rand < move_randomly_at_day_probability)
-                    [bug, sticky_pads] = bug.random_move(house,room_list,sticky_pads);
+                    [bug, sticky_pads] = bug.random_move(house,room_list,sticky_pads,change_room_probability);
                 else
                     [bug, sticky_pads] = bug.regular_move(house, food_lattice,sticky_pads, move_out_of_hiding_place_probability);
                 end
