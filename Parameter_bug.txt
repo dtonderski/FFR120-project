@@ -1,0 +1,52 @@
+German cockroach
+
+Some properties:
+cannot survive severe cold
+cannot fly
+nocturnal, occasionally appears by day
+Life cycle: egg -> nymph -> adult (only adult can reproduce)
+Lay egg area: German cockroaches carry their eggs with them until they are ready to hatch. When it’s time for hatching, the female cockroach will drop the ootheca wherever she is.
+
+
+Update every day
+
+Parameters:
+maxEggs = 30-40 eggs in each ootheca; in a lifetime, almost 4-8 ootheca -> female)
+
+hatch_age = 15-30 days (average gestation period: egg -> nymph 28 days) 
+			for each egg, randomly choose the reproducation age and death age
+reproduction_age = 47-132 days (40-125 days/ also another reference shows 40-84 days for nymph -> adult, a week after becoming an adult, it can reproduce)
+				   probability
+death_age = 100-200 days; (3-6 months, female German cockroaches may live for more than 200 days.)
+			probaility
+
+
+reproduction_probability = ; 2-3 times in a life
+hatch_probability = ; (maybe do not need to consider this? only consider the final number of numph)
+
+hunger increase in a time step: (without food and water, will die in 2 weeks)
+				nymph can live without food for 1 week;
+				between nymph and adult, linear increase
+				adult can live without food for 1 month;
+
+reproduction_hunger = ; (continuous no food for two weeks, cannot reproduce)
+
+death_hunger = 1
+
+hunger_decrease due to food: not 1 but percentage
+
+
+NOT specific:
+nocturnal, occasionally appears by day
+move_out_of_hiding_place_probability = 0.1;
+move_randomly_at_day_probability = 0.01;
+move_randomly_at_night_probability = 0.9;(ok)
+change_room_probability = 0.1;
+
+
+
+
+References:
+https://pestech.com/online-guides/cockroach-life-cycle/
+Studies on the Relation of Chemical Resistance and Several Correlated Enzymatics Acitivity of Blattella Germanica, [D], Master thesis
+https://baike.baidu.com/item/%E5%BE%B7%E5%9B%BD%E5%B0%8F%E8%A0%8A/5464039?fr=aladdin
