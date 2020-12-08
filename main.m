@@ -11,21 +11,25 @@ room_list = Room.create_deafult_room_list();
 
 house = House.create_default_house(room_list);
 
+time_constant = 6; % time steps in one hour
+environment = Environment(house, time_constant); 
+
 human1 = Human(house.find_room("Living area"),1);
 human2 = Human(house.find_room("Kitchen"),2);
 %human3 = Human(house.find_room("Toilet"));
 
 human_list = [human1, human2]; %, human3];
 
-bug1 = Bug(20, 30, house);
-bug2 = Bug(35, 40, house);
+bug1 = Bug(20, 30, house,time_constant);
+bug2 = Bug(35, 40, house,time_constant);
 bug1.age = randi([1,bug1.death_age],1);
 bug2.age = randi([1,bug2.death_age],1);
 % bug1.age = bug1.reproduction_age - 1;
 % bug2.age = bug2.death_age - 10;
+% bug2.hunger = 4315;
 bug_list = [bug1,bug2];
 
-egg = Egg(0,0,0);
+egg = Egg(0,0,0,time_constant);
 egg_list = [egg];
 
 sticky_pads = Sticky_pads(house);
@@ -34,16 +38,14 @@ sticky_pads = sticky_pads.add_sticky_pad([15,15]);
 food_lattice = Food_lattice(house);
 %food_lattice = human1.litter(food_lattice, 100, 4);
 
-time_constant = 6; % time steps in one hour
-environment = Environment(house, time_constant); 
 randomActivity = 0;
 
-reproduction_hunger = 201.6;  % no food for continuous 2 weeks, cannot repro    duce
+reproduction_hunger = 14*24*time_constant;  % no food for continuous 2 weeks, cannot repro    duce
 minEggs = 30;
 maxEggs = 120;
-reproduction_interval = 4320; % 30 days
+reproduction_interval = 30*24*time_constant; % 30 days
 hatch_probability = 0.5;
-hungry_move_threshold = 0.6;
+hungry_move_threshold = 6;
 move_out_of_hiding_probability = 0.2;
 move_out_of_hiding_probability_if_human_in_room = 0.001;
 move_randomly_at_day_probability = 0.01;
@@ -52,7 +54,7 @@ change_room_probability = 0.01;
 change_rooms_if_no_food_probability = 1;
 time_steps = 300;
 
-[p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads);
+[p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads,time_constant);
 
 for t = 1:time_steps
     tic
@@ -62,12 +64,12 @@ for t = 1:time_steps
                 move_randomly_at_day_probability, move_randomly_at_night_probability,change_room_probability,       ...
                 change_rooms_if_no_food_probability, move_out_of_hiding_probability_if_human_in_room);
     
-    [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_probability,house);
+    [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_probability,house,time_constant);
     
     % human behaviour should depend on the time instead of probabilty
     [human_list, food_lattice, environment] = Human.update_humans(human_list, house, environment, food_lattice);
     toc
-    [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5);
+    [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5,time_constant);
     
     title(sprintf('$t = %d, n_{bugs} = %d$, night = %d', t, length(bug_list), environment.determine_night().night), 'interpreter', 'latex');
     if length(bug_list) < 1 && length(egg_list) < 1
@@ -76,18 +78,18 @@ for t = 1:time_steps
     shg;
 end
 
-function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads)
+function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads ,time_constant)
     clf
     hold on
     house.show_house();
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
     p2 = food_lattice.show_food('.', 1000, 'blue');
     p5 = sticky_pads.show_pads('.', 1000, 'cyan');
-    p3 = Bug.show_bugs(bug_list, '.', 1000);
-    p4 = Egg.show_eggs(egg_list,'.',300);
+    p3 = Bug.show_bugs(bug_list, '.', 1000,time_constant);
+    p4 = Egg.show_eggs(egg_list,'.',300,time_constant);
 end
 
-function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5)
+function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5,time_constant)
     hold on
     delete(p1);
     delete(p2);
@@ -97,6 +99,6 @@ function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, 
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
     p2 = food_lattice.show_food('.', 1000, 'blue');
     p5 = sticky_pads.show_pads('.', 1000, 'cyan');
-    p3 = Bug.show_bugs(bug_list, '.', 1000);
-    p4 = Egg.show_eggs(egg_list,'.',300);  
+    p3 = Bug.show_bugs(bug_list, '.', 1000,time_constant);
+    p4 = Egg.show_eggs(egg_list,'.',300,time_constant);  
 end
