@@ -9,12 +9,9 @@ classdef Human
         activity
         time_active
         random_activity
-<<<<<<< Updated upstream
-        bedroom
-=======
+
         bedroom_name
         sleeping
->>>>>>> Stashed changes
     end
     
     methods
@@ -23,12 +20,8 @@ classdef Human
             obj.activity = false;
             obj.time_active = 0;
             obj.random_activity = 0;
-<<<<<<< Updated upstream
-            obj.bedroom = bed_OneOrTwo;
-=======
             obj.bedroom_name = bed_OneOrTwo;
             obj.sleeping = false;
->>>>>>> Stashed changes
         end
                 
         function obj = change_room(obj, room)
@@ -38,25 +31,6 @@ classdef Human
         function obj= active(obj,condition)
             obj.activity = condition;
         end
-<<<<<<< Updated upstream
-        
-        
-        %%%  Should this be static methods or methods in the enviroment? %%% 
-        function time_step = get_time_step(obj, enviroment)
-            time_step = enviroment.time_step;
-        end
-        
-        function day = get_day(obj, enviroment)
-            day = enviroment.day;
-        end
-        
-        function week = get_week(obj, enviroment)
-            week = enviroment.week;
-        end
-        %%% %%% %%% %%% %%% 
-         
-=======
->>>>>>> Stashed changes
 
         function food_lattice = clean(obj, food_lattice)
             food_lattice = food_lattice.clean_area(obj.room.room_start_house, obj.room.room_stop_house);
@@ -77,21 +51,6 @@ classdef Human
 %               
                 if environment.weekend == false
                     
-<<<<<<< Updated upstream
-                    if human.get_time_step(environment) <= 8*environment.time_constant
-                        if human.room.room_name ~= "Bedroom 1" && human.bedroom == 1
-                            human = human.change_room(house.find_room("Bedroom 1"));
-                        end
-
-                        if human.room.room_name ~= "Bedroom 2" && human.bedroom == 2
-                            human = human.change_room(house.find_room("Bedroom 2"));
-                        end
-                    end
-                
-                    if human.get_time_step(environment) <= 9*environment.time_constant && human.get_time_step(environment) > 8*environment.time_constant
-                        human = human.change_room(house.find_room("Kitchen"));    
-                        food_lattice = human.litter(food_lattice, 100, 4);
-=======
                     if environment.time_step_current_day <= 8*environment.time_constant
                         
                         if human.room.room_name ~= human.bedroom_name
@@ -108,15 +67,15 @@ classdef Human
                         if rand < 0.2 % probability of leaving crumbs/food
                             food_lattice = human.litter(food_lattice, 100, 1);
                         end
->>>>>>> Stashed changes
+
                     end 
 
-                    if human.get_time_step(environment) <= 17*environment.time_constant && human.get_time_step(environment) > 9*environment.time_constant
+                    if environment.time_step_current_day <= 17*environment.time_constant && environment.time_step_current_day > 9*environment.time_constant
                         human = human.change_room(house.find_room("Out"));
                     end
 
                     %%% ACTIVITY PART %%%
-                    if human.get_time_step(environment) <= 24*environment.time_constant && human.get_time_step(environment) > 17*environment.time_constant         
+                    if environment.time_step_current_day <= 24*environment.time_constant && environment.time_step_current_day > 17*environment.time_constant         
                         if human.activity == false
                             human.random_activity = rand;
                         end 
@@ -178,19 +137,7 @@ classdef Human
                 % instead of work have an activity
                 
                 else %(enviroment.weekend == true)
-<<<<<<< Updated upstream
-                    if human.get_time_step(environment) <= 9*environment.time_constant
-                          if human.room.room_name ~= "Bedroom 1" && human.bedroom == 1
-                              human = human.change_room(house.find_room("Bedroom 1"));
-                          end
-                          
-                          if human.room.room_name ~= "Bedroom 2" && human.bedroom == 2
-                              human = human.change_room(house.find_room("Bedroom 2"));
-                          end
-                    end
-                    
-                    if human.get_time_step(environment) <= 10*environment.time_constant && human.get_time_step(environment) > 9*environment.time_constant
-=======
+
                     if environment.time_step_current_day <= 9*environment.time_constant
                         
                         if human.room.room_name ~= human.bedroom_name
@@ -200,9 +147,9 @@ classdef Human
                         
                     end
                     
+
+
                     if environment.time_step_current_day <= 10*environment.time_constant && environment.time_step_current_day > 9*environment.time_constant
-                        human.sleeping = false;
->>>>>>> Stashed changes
                         human = human.change_room(house.find_room("Kitchen"));    
                         if rand < 0.1 % probability of leaving crumbs/food
                             food_lattice = human.litter(food_lattice, 100, 1);
@@ -210,7 +157,7 @@ classdef Human
                     end
                     
                     %%% ACTIVITY PART %%%
-                    if human.get_time_step(environment) <= 24*environment.time_constant && human.get_time_step(environment) > 10*environment.time_constant         
+                    if environment.time_step_current_day <= 24*environment.time_constant && environment.time_step_current_day > 10*environment.time_constant         
                         if human.activity == false
                             human.random_activity = rand;
                         end 

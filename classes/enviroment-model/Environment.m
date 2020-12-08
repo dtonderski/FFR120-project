@@ -4,7 +4,7 @@ classdef Environment
     
     properties
         house
-        time_step
+        time_step_current_day
         time_constant
         day
         week
@@ -17,7 +17,7 @@ classdef Environment
     methods
         function obj = Environment(house, time_constant)
             obj.house = house;
-            obj.time_step = 0;
+            obj.time_step_current_day = 0;
             obj.time_constant = time_constant;
             obj.day = 1;
             obj.week = 0;
@@ -27,7 +27,7 @@ classdef Environment
         
         
         function obj = increase_time(obj)
-            obj.time_step = obj.time_step +1;
+            obj.time_step_current_day = obj.time_step_current_day +1;
         end
         
         function obj = increase_day(obj)
@@ -40,9 +40,9 @@ classdef Environment
         
 %         % update the day and week
         function obj = update_day(obj)
-            if obj.time_step/(24*obj.time_constant) == 1
+            if obj.time_step_current_day/(24*obj.time_constant) == 1
                 obj = obj.increase_day();
-                obj.time_step = 0;
+                obj.time_step_current_day = 0;
             end
         end
 
@@ -56,7 +56,7 @@ classdef Environment
 %         
         function obj = determine_night(obj)
 
-            if obj.time_step < 8*obj.time_constant
+            if obj.time_step_current_day < 8*obj.time_constant
                 obj.night = true;
             else
                 obj.night = false;
@@ -71,8 +71,7 @@ classdef Environment
             else
                 obj.weekend = false;
             end
-            
-        end
+        end        
     end
     
     methods(Static)
