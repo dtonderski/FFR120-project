@@ -10,6 +10,7 @@ classdef Human
         time_active
         random_activity
         bedroom
+        sleeping
     end
     
     methods
@@ -19,6 +20,7 @@ classdef Human
             obj.time_active = 0;
             obj.random_activity = 0;
             obj.bedroom = bed_OneOrTwo;
+            obj.sleeping = 0;
         end
                 
         function obj = change_room(obj, room)
@@ -27,20 +29,6 @@ classdef Human
         
         function obj= active(obj,condition)
             obj.activity = condition;
-        end
-        
-        
-        %%%  Should this be static methods or methods in the enviroment? %%% 
-        function time_step = get_time_step(obj, enviroment)
-            time_step = enviroment.time_step;
-        end
-        
-        function day = get_day(obj, enviroment)
-            day = enviroment.day;
-        end
-        
-        function week = get_week(obj, enviroment)
-            week = enviroment.week;
         end
         %%% %%% %%% %%% %%% 
          
@@ -68,7 +56,7 @@ classdef Human
 %               
                 if environment.weekend == false
                     
-                    if human.get_time_step(environment) <= 8*environment.time_constant
+                    if environment.time_step_current_day <= 8*environment.time_constant
                         if human.room.room_name ~= "Bedroom 1" && human.bedroom == 1
                             human = human.change_room(house.find_room("Bedroom 1"));
                         end
@@ -76,19 +64,23 @@ classdef Human
                         if human.room.room_name ~= "Bedroom 2" && human.bedroom == 2
                             human = human.change_room(house.find_room("Bedroom 2"));
                         end
+                        
+%                         if human.room.room_name ~= human.bedroom_name
+%                             human = human.change_room(house.find_room(human.bedroom_name));
+%                         end
                     end
                 
-                    if human.get_time_step(environment) <= 9*environment.time_constant && human.get_time_step(environment) > 8*environment.time_constant
+                    if environment.time_step_current_day <= 9*environment.time_constant && environment.time_step_current_day > 8*environment.time_constant
                         human = human.change_room(house.find_room("Kitchen"));    
                         food_lattice = human.litter(food_lattice, 100, 4);
                     end 
 
-                    if human.get_time_step(environment) <= 17*environment.time_constant && human.get_time_step(environment) > 9*environment.time_constant
+                    if environment.time_step_current_day <= 17*environment.time_constant && environment.time_step_current_day > 9*environment.time_constant
                         human = human.change_room(house.find_room("Out"));
                     end
 
                     %%% ACTIVITY PART %%%
-                    if human.get_time_step(environment) <= 24*environment.time_constant && human.get_time_step(environment) > 17*environment.time_constant         
+                    if environment.time_step_current_day <= 24*environment.time_constant && environment.time_step_current_day > 17*environment.time_constant         
                         if human.activity == false
                             human.random_activity = rand;
                         end 
@@ -141,7 +133,7 @@ classdef Human
                 % instead of work have an activity
                 
                 else %(enviroment.weekend == true)
-                    if human.get_time_step(environment) <= 9*environment.time_constant
+                    if environment.time_step_current_day <= 9*environment.time_constant
                           if human.room.room_name ~= "Bedroom 1" && human.bedroom == 1
                               human = human.change_room(house.find_room("Bedroom 1"));
                           end
@@ -151,13 +143,13 @@ classdef Human
                           end
                     end
                     
-                    if human.get_time_step(environment) <= 10*environment.time_constant && human.get_time_step(environment) > 9*environment.time_constant
+                    if environment.time_step_current_day <= 10*environment.time_constant && environment.time_step_current_day > 9*environment.time_constant
                         human = human.change_room(house.find_room("Kitchen"));    
                         food_lattice = human.litter(food_lattice, 100, 4);
                     end
                     
                     %%% ACTIVITY PART %%%
-                    if human.get_time_step(environment) <= 24*environment.time_constant && human.get_time_step(environment) > 10*environment.time_constant         
+                    if environment.time_step_current_day <= 24*environment.time_constant && environment.time_step_current_day > 10*environment.time_constant         
                         if human.activity == false
                             human.random_activity = rand;
                         end 

@@ -114,7 +114,7 @@ classdef Bug
                 obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
             elseif obj.in_hiding_place
                 for human = human_list
-                    if isequal(human.room.room_name, obj.room.room_name)
+                    if isequal(human.room.room_name, obj.room.room_name) && human.sleeping
                         if rand > move_out_of_hiding_probability_if_human_in_room
                             return
                         end
@@ -187,8 +187,8 @@ classdef Bug
                      sticky_pad_locations_in_house = sticky_pads.pad_locations;
                      all_locations_in_house = [food_locations_in_house;sticky_pad_locations_in_house];
                      index = randi([1,size(all_locations_in_house,1)]);
-                     obj.x = index(1);
-                     obj.y = index(2);                    
+                     obj.x = all_locations_in_house(index,1);
+                     obj.y = all_locations_in_house(index,2);                    
                  end
                  obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
                  [obj, sticky_pads] = check_if_on_sticky_pad(obj, sticky_pads);
@@ -200,11 +200,12 @@ classdef Bug
         end
         
         function [obj,food_lattice] = consume(obj,food_lattice)
-            obj.hunger = obj.hunger + 0.1; % no food for one day -> hunger += 14.4;1 week,100.8;2 weeks, 201.6,;1 month 432
+            % bug must eat on average once a day, or it will eventually die
+            obj.hunger = obj.hunger + 1; % no food for one day -> hunger += 144;1 week,1008;2 weeks, 2016,;1 month 4320
             food_locations_in_house = food_lattice.food_locations;
             for i = 1:size(food_locations_in_house,1)
                 if (obj.x == food_locations_in_house(i,1)&&obj.y==food_locations_in_house(i,2))
-                    obj.hunger = max(0,obj.hunger-14.4); % eat once is enough for one day?
+                    obj.hunger = max(0,obj.hunger-144); % eat once is enough for one day?
                     food_lattice = food_lattice.remove_quantity_of_food(food_locations_in_house(i,:),1);
                     break;
                 end
@@ -215,13 +216,13 @@ classdef Bug
             egg = Egg(obj.x,obj.y,quantity);
         end
         
-        function [death_standard,death_hunger] = die(obj)
+        function [death_standard,death_hunger] = update_death(obj)
             if obj.age >= obj.adult_age && obj.age <= obj.death_age
-                death_hunger = 432;
+                death_hunger = 4320;
             elseif obj.age < obj.adult_age
-                death_hunger = 100.8 + 331.2 * obj.age / obj.adult_age;
+                death_hunger = 1008 + 3312 * obj.age / obj.adult_age;
             end
-            if obj.age >= obj.death_age || obj.hunger >= death_hunger || obj.on_sticky_pad
+            if obj.age >= obj.death_age || obj.hunger >= death_hunger
                 death_standard = 1;
             else
                 death_standard = 0;
@@ -239,12 +240,12 @@ classdef Bug
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);                
-                [death_standard,death_hunger] = die(bug);
+                [death_standard,death_hunger] = update_death(bug);
                 if death_standard == 1
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
                 elseif death_standard == 0
                     if bug.hunger >= (death_hunger - hungry_move_threshold)
-                        [bug, sticky_pads] = bug.hungry_move(house,room_list,sticky_pads,change_room_probability);
+                        [bug, sticky_pads] = bug.hungry_move(house,sticky_pads,food_lattice);
                     elseif (environment.night && rand < move_randomly_at_night_probability) || ...
                             (~environment.night && rand < move_randomly_at_day_probability)
                         [bug, sticky_pads] = bug.random_move(house,room_list,sticky_pads,change_room_probability);
