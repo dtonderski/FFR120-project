@@ -49,7 +49,7 @@ classdef Environment
         function obj = update_week(obj)
             if obj.day/7 == 1
                 obj = obj.increase_week();
-                obj.day = 0;
+                obj.day = 1;
             end
         end
         
@@ -69,10 +69,27 @@ classdef Environment
             if obj.day/6 == 1 || obj.day/7 == 1 
                 obj.weekend = true;
             else
-                obj.night = false;
+                obj.weekend = false;
             end
             
         end
     end
+    
+    methods(Static)
+        
+        function environment = update_environment(environment)
+            % this might be fucked up idk
+            environment = environment.update_day();
+            environment = environment.update_week();
+
+            environment = environment.increase_time();
+            environment = environment.determine_weekend();
+
+        end
+        
+    end
+    
+
+        
 end
 

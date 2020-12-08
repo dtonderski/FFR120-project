@@ -9,7 +9,12 @@ classdef Human
         activity
         time_active
         random_activity
+<<<<<<< Updated upstream
         bedroom
+=======
+        bedroom_name
+        sleeping
+>>>>>>> Stashed changes
     end
     
     methods
@@ -18,7 +23,12 @@ classdef Human
             obj.activity = false;
             obj.time_active = 0;
             obj.random_activity = 0;
+<<<<<<< Updated upstream
             obj.bedroom = bed_OneOrTwo;
+=======
+            obj.bedroom_name = bed_OneOrTwo;
+            obj.sleeping = false;
+>>>>>>> Stashed changes
         end
                 
         function obj = change_room(obj, room)
@@ -28,6 +38,7 @@ classdef Human
         function obj= active(obj,condition)
             obj.activity = condition;
         end
+<<<<<<< Updated upstream
         
         
         %%%  Should this be static methods or methods in the enviroment? %%% 
@@ -44,9 +55,10 @@ classdef Human
         end
         %%% %%% %%% %%% %%% 
          
+=======
+>>>>>>> Stashed changes
 
         function food_lattice = clean(obj, food_lattice)
-            % works fine
             food_lattice = food_lattice.clean_area(obj.room.room_start_house, obj.room.room_stop_house);
         end
         
@@ -57,17 +69,15 @@ classdef Human
     
     methods(Static)
     
-        function [human_list, food_lattice, environment] = update_humans(human_list, house, environment, food_lattice)
+        function [human_list, food_lattice] = update_humans(human_list, house, environment, food_lattice, room_list)
             
-                environment = environment.increase_time();
-                environment = environment.determine_weekend();
-               
                 
             for human_index = 1:length(human_list)
                 human = human_list(human_index);
 %               
                 if environment.weekend == false
                     
+<<<<<<< Updated upstream
                     if human.get_time_step(environment) <= 8*environment.time_constant
                         if human.room.room_name ~= "Bedroom 1" && human.bedroom == 1
                             human = human.change_room(house.find_room("Bedroom 1"));
@@ -81,6 +91,24 @@ classdef Human
                     if human.get_time_step(environment) <= 9*environment.time_constant && human.get_time_step(environment) > 8*environment.time_constant
                         human = human.change_room(house.find_room("Kitchen"));    
                         food_lattice = human.litter(food_lattice, 100, 4);
+=======
+                    if environment.time_step_current_day <= 8*environment.time_constant
+                        
+                        if human.room.room_name ~= human.bedroom_name
+                        human = human.change_room(house.find_room(human.bedroom_name));
+                        human.sleeping = true;
+                        end
+                        
+                    end
+                
+                    if environment.time_step_current_day <= 9*environment.time_constant && environment.time_step_current_day > 8*environment.time_constant
+                        human.sleeping = false;      
+                        % go eat 
+                        human = human.change_room(house.find_room("Kitchen")); 
+                        if rand < 0.2 % probability of leaving crumbs/food
+                            food_lattice = human.litter(food_lattice, 100, 1);
+                        end
+>>>>>>> Stashed changes
                     end 
 
                     if human.get_time_step(environment) <= 17*environment.time_constant && human.get_time_step(environment) > 9*environment.time_constant
@@ -108,20 +136,29 @@ classdef Human
                         human = human.active(true);
                         human = human.change_room(house.find_room("Living area"));
                         human.time_active = human.time_active +1; 
+                            if rand < 0.3 % probability of leaving crumbs/food
+                                food_lattice = human.litter(food_lattice, 100, 1);
+                            end
                         
                         elseif human.time_active < 2*environment.time_constant && (human.random_activity > 0.5 && human.random_activity < 0.8)
                         human = human.active(true);
                         human = human.change_room(house.find_room("Kitchen"));
                         human.time_active = human.time_active +1; 
+                            if rand < 0.1 % probability of leaving crumbs/food
+                                food_lattice = human.litter(food_lattice, 100, 1);
+                            end
                         
-                        %%% Cleaning a random room %%%
+%%%%%%%%%%%%%%%%%%%%%%%% %%% Cleaning a random room %%%
+
                         elseif human.time_active < 1*environment.time_constant && (human.random_activity > 0.8)
                             
-                        %clean_random = ceil(rand*length(room.room_list));
-                        human = human.change_room(house.find_room("Kitchen"));
+                        clean_random = ceil(rand*length(room_list)); % randomize the room to clean
+                        clean_room = room_list(clean_random).room_name;
+                        human = human.change_room(house.find_room(clean_room));
                         food_lattice = human.clean(food_lattice);
                         human.time_active = human.time_active +1; 
-
+                        
+%%%%%%%%%%%%%%%%%%%%%%%% %%%
                         else % break when done with activity
                             human = human.active(false);
                             human = human.change_room(house.find_room("Hallway"));
@@ -141,6 +178,7 @@ classdef Human
                 % instead of work have an activity
                 
                 else %(enviroment.weekend == true)
+<<<<<<< Updated upstream
                     if human.get_time_step(environment) <= 9*environment.time_constant
                           if human.room.room_name ~= "Bedroom 1" && human.bedroom == 1
                               human = human.change_room(house.find_room("Bedroom 1"));
@@ -152,8 +190,23 @@ classdef Human
                     end
                     
                     if human.get_time_step(environment) <= 10*environment.time_constant && human.get_time_step(environment) > 9*environment.time_constant
+=======
+                    if environment.time_step_current_day <= 9*environment.time_constant
+                        
+                        if human.room.room_name ~= human.bedroom_name
+                        human = human.change_room(house.find_room(human.bedroom_name));
+                        human.sleeping = true;
+                        end
+                        
+                    end
+                    
+                    if environment.time_step_current_day <= 10*environment.time_constant && environment.time_step_current_day > 9*environment.time_constant
+                        human.sleeping = false;
+>>>>>>> Stashed changes
                         human = human.change_room(house.find_room("Kitchen"));    
-                        food_lattice = human.litter(food_lattice, 100, 4);
+                        if rand < 0.1 % probability of leaving crumbs/food
+                            food_lattice = human.litter(food_lattice, 100, 1);
+                        end
                     end
                     
                     %%% ACTIVITY PART %%%
@@ -162,24 +215,33 @@ classdef Human
                             human.random_activity = rand;
                         end 
                         
-                        % just add more if you want to 
-                        if human.time_active < 1*environment.time_constant && (human.random_activity > 0.3 && human.random_activity < 0.5)
+                         % just add more if you want to 
+                        if human.time_active < 1*environment.time_constant && (human.random_activity < 0.1)
                         human = human.active(true);
                         human = human.change_room(house.find_room("Toilet"));
                         human.time_active = human.time_active +1; 
                         
-                        elseif human.time_active < 5*environment.time_constant && human.random_activity > 0.5
+                        elseif human.time_active < 5*environment.time_constant && (human.random_activity > 0.1 && human.random_activity < 0.5)
                         human = human.active(true);
                         human = human.change_room(house.find_room("Out"));
                         human.time_active = human.time_active +1; 
-
-                        
-                        elseif human.time_active < 5*environment.time_constant && human.random_activity < 0.3
+                       
+                        elseif human.time_active < 3*environment.time_constant && (human.random_activity > 0.5 && human.random_activity < 0.8)
                         human = human.active(true);
                         human = human.change_room(house.find_room("Living area"));
                         human.time_active = human.time_active +1; 
+                            if rand < 0.2 % probability of leaving crumbs/food
+                                food_lattice = human.litter(food_lattice, 100, 1);
+                            end
                         
-
+                        elseif human.time_active < 2*environment.time_constant && (human.random_activity > 0.8)
+                        human = human.active(true);
+                        human = human.change_room(house.find_room("Kitchen"));
+                        human.time_active = human.time_active +1; 
+                            if rand < 0.2 % probability of leaving crumbs/food
+                                food_lattice = human.litter(food_lattice, 100, 1);
+                            end
+                        
                         else % break when done with activity
                             human = human.active(false);
                             human = human.change_room(house.find_room("Hallway"));
@@ -195,10 +257,6 @@ classdef Human
                 
                 human_list(human_index) = human;
             end 
-     
-            % update the day and week
-            environment = environment.update_day();
-            environment = environment.update_week();
 
         end
         
