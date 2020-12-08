@@ -44,21 +44,23 @@ maxEggs = 120;
 reproduction_interval = 4320; % 30 days
 hatch_probability = 0.5;
 hungry_move_threshold = 0.6;
-move_out_of_hiding_probability = 0.1;
+move_out_of_hiding_probability = 0.2;
+move_out_of_hiding_probability_if_human_in_room = 0.001;
 move_randomly_at_day_probability = 0.01;
 move_randomly_at_night_probability = 1;
 change_room_probability = 0.01;
 change_rooms_if_no_food_probability = 1;
+time_steps = 300;
 
 [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads);
 
-for t = 1:200
+for t = 1:time_steps
     tic
-    [bug_list, egg_list, food_lattice, sticky_pads] = Bug.update_bugs(bug_list, egg_list, room_list,         ...
-                reproduction_interval, reproduction_hunger, minEggs, maxEggs, hungry_move_threshold, ...
-        environment, house, food_lattice, sticky_pads, move_out_of_hiding_probability,                      ...
-        move_randomly_at_day_probability, move_randomly_at_night_probability,change_room_probability,       ...
-        change_rooms_if_no_food_probability);
+    [bug_list, egg_list, food_lattice, sticky_pads] = Bug.update_bugs(bug_list, egg_list, room_list,                ...
+                human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs, hungry_move_threshold,    ...
+                environment, house, food_lattice, sticky_pads, move_out_of_hiding_probability,                      ...
+                move_randomly_at_day_probability, move_randomly_at_night_probability,change_room_probability,       ...
+                change_rooms_if_no_food_probability, move_out_of_hiding_probability_if_human_in_room);
     
     [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_probability,house);
     
@@ -71,7 +73,6 @@ for t = 1:200
     if length(bug_list) < 1 && length(egg_list) < 1
             break
     end
-    pause(0.2)
     shg;
 end
 
@@ -99,5 +100,3 @@ function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, 
     p3 = Bug.show_bugs(bug_list, '.', 1000);
     p4 = Egg.show_eggs(egg_list,'.',300);  
 end
-
-

@@ -77,12 +77,14 @@ classdef Bug
 
         end
 
-        function [obj, sticky_pads] = regular_move(obj, house, room_list, food_lattice, sticky_pads, ...
-                move_out_of_hiding_probability, change_room_probability, change_rooms_if_no_food_probability)            
+        function [obj, sticky_pads] = regular_move(obj, house, room_list, food_lattice, human_list, sticky_pads, ...
+                            move_out_of_hiding_probability, change_room_probability, change_rooms_if_no_food_probability, ...
+                            move_out_of_hiding_probability_if_human_in_room)       
             % if bug is stuck - don't move
             % else if rand < change room probability - change position to 
             %   random position in new room
             % else if object is in hiding place
+            %   if human in room, don't move
             %   if rand < moveOutOfHidingPlaceProbability, 
             %       if there are foods or sticky pads in room
             %           move to random
@@ -94,7 +96,7 @@ classdef Bug
             %   
             % else (object isn't in a hiding place, but isn't stuck or
             %       supposed to move out of the hiding place):
-            %   if there are hiding places in the room, move to random 
+            %   if there are hiding places in the room: move to random 
             %       hiding place within room
             %   else 
             %       if there are no foods or sticky pads in the room
@@ -111,6 +113,13 @@ classdef Bug
                 [obj, sticky_pads] = check_if_on_sticky_pad(obj, sticky_pads);
                 obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
             elseif obj.in_hiding_place
+                for human = human_list
+                    if isequal(human.room.room_name, obj.room.room_name)
+                        if rand > move_out_of_hiding_probability_if_human_in_room
+                            return
+                        end
+                    end
+                end
                 if rand < move_out_of_hiding_probability
                     food_locations_in_room = house.get_food_locations_in_current_room(obj.x, obj.y, food_lattice);
                     free_sticky_pad_locations_in_room = house.get_free_sticky_pad_locations_in_current_room(obj.x, obj.y, sticky_pads); 
@@ -186,7 +195,6 @@ classdef Bug
              end
         end
                  
-               
         function obj = grow(obj)
             obj.age = obj.age + 1;
         end
@@ -223,10 +231,11 @@ classdef Bug
     
     methods(Static)
         function [bug_list,egg_list,food_lattice, sticky_pads] = update_bugs(bug_list, egg_list, room_list,         ...
-                reproduction_interval, reproduction_hunger, minEggs, maxEggs, hungry_move_threshold, ...
+                human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs, hungry_move_threshold,    ...
                 environment, house, food_lattice, sticky_pads, move_out_of_hiding_probability,                      ...
                 move_randomly_at_day_probability, move_randomly_at_night_probability,change_room_probability,       ...
-        change_rooms_if_no_food_probability)
+                change_rooms_if_no_food_probability, move_out_of_hiding_probability_if_human_in_room)
+    
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);                
@@ -240,8 +249,9 @@ classdef Bug
                             (~environment.night && rand < move_randomly_at_day_probability)
                         [bug, sticky_pads] = bug.random_move(house,room_list,sticky_pads,change_room_probability);
                     else
-                        [bug, sticky_pads] = bug.regular_move(house, room_list, food_lattice, sticky_pads, ...
-                            move_out_of_hiding_probability, change_room_probability, change_rooms_if_no_food_probability);
+                        [bug, sticky_pads] = bug.regular_move(house, room_list, food_lattice, human_list, sticky_pads, ...
+                            move_out_of_hiding_probability, change_room_probability, change_rooms_if_no_food_probability, ...
+                            move_out_of_hiding_probability_if_human_in_room);  
                     end
                     [bug,food_lattice] = bug.consume(food_lattice);
                     bug = bug.grow();
