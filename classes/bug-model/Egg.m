@@ -6,6 +6,7 @@ classdef Egg
         quantity {mustBeNumeric}
         age {mustBeNumeric}
         egg_location
+        hatch_age {mustBeNumeric}
     end
     
     methods
@@ -13,6 +14,7 @@ classdef Egg
             obj.quantity = quantity;
             obj.egg_location = [x,y];
             obj.age = 1;
+            obj.hatch_age = randi([2160,4320],1);  %15-30 days
         end
         
         function obj = hatch(obj)
@@ -30,12 +32,12 @@ classdef Egg
     end
         
         methods(Static)       
-            function [egg_list, bug_list] = update_eggs(egg_list,bug_list,hatch_age,hatch_probability,house)
+            function [egg_list, bug_list] = update_eggs(egg_list,bug_list,hatch_probability,house)
                 egg_to_remove_indices = [];
                 for egg_index = 1:length(egg_list)
                     bug_egg = egg_list(egg_index);
                     bug_egg = bug_egg.hatch();
-                    if bug_egg.age == hatch_age
+                    if bug_egg.age == bug_egg.hatch_age
                         egg_quantity = bug_egg.quantity;
                         hatch_number = fix(egg_quantity*hatch_probability);
                         for hatch_index = 1:hatch_number
