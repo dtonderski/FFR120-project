@@ -23,7 +23,7 @@ classdef Bug
     end
     
     methods
-        function obj = Bug(x,y, house)
+        function obj = Bug(x,y, house, time_constant)
             obj.x = x;
             obj.y = y;
             obj.age = 0;
@@ -31,9 +31,9 @@ classdef Bug
             obj.in_hiding_place = house.is_hiding_place(x,y);
             obj.on_sticky_pad = 0;
             obj.room = house.room_list(house.lattice_with_rooms(obj.x,obj.y));
-            obj.death_age = randi([14400,28800],1); %100-200 days; timestep = 10 min
-            obj.adult_age = randi([5760,obj.death_age],1);% 40 days
-            obj.reproduction_age = obj.adult_age + 1008; % can reproduce after being an adult for 1 week
+            obj.death_age = randi([100*24*time_constant,200*24*time_constant],1); %100-200 days; timestep = 10 min
+            obj.adult_age = randi([40*24*time_constant,80*24*time_constant],1);% 40-80 days
+            obj.reproduction_age = obj.adult_age + 7*24*time_constant; % can reproduce after being an adult for 1 week
         end
         
         function obj = change_room_to_random_different(obj, room_list)
@@ -176,11 +176,11 @@ classdef Bug
              else
                  food_locations_in_room = house.get_food_locations_in_current_room(obj.x, obj.y, food_lattice);
                  free_sticky_pad_locations_in_room = house.get_free_sticky_pad_locations_in_current_room(obj.x, obj.y, sticky_pads);
-                 locations = [free_sticky_pad_locations_in_room;food_locations_in_room];
-                 if ~isempty(locations)
-                     new_location_index = randi([1, size(locations, 1)]);
-                     obj.x = locations(new_location_index, 1);
-                     obj.y = locations(new_location_index, 2);
+                 all_locations_in_room = [free_sticky_pad_locations_in_room;food_locations_in_room];
+                 if ~isempty(all_locations_in_room)
+                     new_location_index = randi([1, size(all_locations_in_room, 1)]);
+                     obj.x = all_locations_in_room(new_location_index, 1);
+                     obj.y = all_locations_in_room(new_location_index, 2);
                    
                  else
                      food_locations_in_house = food_lattice.food_locations;
@@ -199,29 +199,30 @@ classdef Bug
             obj.age = obj.age + 1;
         end
         
-        function [obj,food_lattice] = consume(obj,food_lattice)
+        function [obj,food_lattice] = consume(obj,food_lattice,time_constant)
             % bug must eat on average once a day, or it will eventually die
             obj.hunger = obj.hunger + 1; % no food for one day -> hunger += 144;1 week,1008;2 weeks, 2016,;1 month 4320
             food_locations_in_house = food_lattice.food_locations;
             for i = 1:size(food_locations_in_house,1)
                 if (obj.x == food_locations_in_house(i,1)&&obj.y==food_locations_in_house(i,2))
-                    obj.hunger = max(0,obj.hunger-144); % eat once is enough for one day?
+                    obj.hunger = max(0,(obj.hunger - 24 * time_constant)); % eat once is enough for one day?
                     food_lattice = food_lattice.remove_quantity_of_food(food_locations_in_house(i,:),1);
                     break;
                 end
             end
         end
         
-        function egg = lay_eggs(obj, quantity)
-            egg = Egg(obj.x,obj.y,quantity);
+        function egg = lay_eggs(obj, quantity,time_constant)
+            egg = Egg(obj.x,obj.y,quantity,time_constant);
         end
         
         function [death_standard,death_hunger, human_list] = update_death(obj, ...
-                human_list, notice_probability, kill_if_noticed_probability)
+                human_list, notice_probability, kill_if_noticed_probability, time_constant)
+                
             if obj.age >= obj.adult_age && obj.age <= obj.death_age
-                death_hunger = 4320;
+                death_hunger = 30 * 24 * time_constant;
             elseif obj.age < obj.adult_age
-                death_hunger = 1008 + 3312 * obj.age / obj.adult_age;
+                death_hunger = 7 * 24 * time_constant + 23 * 24 * time_constant * obj.age / obj.adult_age;
             end
             if obj.age >= obj.death_age || obj.hunger >= death_hunger
                 death_standard = 1;
@@ -254,9 +255,11 @@ classdef Bug
     
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
-                bug = bug_list(bug_index);                
+                bug = bug_list(bug_index);           
+                
                 [death_standard,death_hunger, human_list] = bug.update_death(human_list, ...
-                    notice_probability, kill_if_noticed_probability);
+                    notice_probability, kill_if_noticed_probability, environment.time_constant);
+
                 if death_standard == 1
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
                 elseif death_standard == 0
@@ -270,13 +273,13 @@ classdef Bug
                             move_out_of_hiding_probability, change_room_probability, change_rooms_if_no_food_probability, ...
                             move_out_of_hiding_probability_if_human_in_room);  
                     end
-                    [bug,food_lattice] = bug.consume(food_lattice);
+                    [bug,food_lattice] = bug.consume(food_lattice,environment.time_constant);
                     bug = bug.grow();
                     
                     if bug.age == bug.reproduction_age
                         if bug.in_hiding_place && bug.hunger < reproduction_hunger
                             numberOfEggs = randi([minEggs,maxEggs],1);
-                            egg = bug.lay_eggs(numberOfEggs);
+                            egg = bug.lay_eggs(numberOfEggs,environment.time_constant);
                             egg_list = [egg_list,egg];
                             bug.reproduction_age = bug.age + reproduction_interval;
                         else
@@ -290,7 +293,7 @@ classdef Bug
             killed_bugs = bugs_to_kill_indices;
         end
         
-        function p = show_bugs(bug_list, marker_type, marker_size)
+        function p = show_bugs(bug_list, marker_type, marker_size,time_constant)
             n_bugs = length(bug_list);
             X = zeros(1, n_bugs);
             Y = zeros(1, n_bugs);
@@ -300,7 +303,7 @@ classdef Bug
                 bug = bug_list(i);
                 X(i) = bug.x;
                 Y(i) = bug.y;
-                color(i,:) = cmap(fix(bug.age/144) + 1,:);
+                color(i,:) = cmap(fix(bug.age/24/time_constant) + 1,:);
             end
             p = scatter(X,Y,marker_size,color,marker_type);
         end
