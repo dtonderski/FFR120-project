@@ -28,8 +28,11 @@ classdef Statistics
         function obj = update_statistics(obj, bug_list, t, killed_bugs)
             n_bugs = length(bug_list);
             obj.n_bug_data(t+1) = n_bugs;
-            obj.alive_bugs = [obj.alive_bugs, obj.next_bug_index:obj.next_bug_index+length(killed_bugs)+(n_bugs - length(obj.alive_bugs)-1)];
-            obj.next_bug_index = obj.alive_bugs(end) + 1;
+            
+            new_next_bug_index = obj.next_bug_index+length(killed_bugs)+(n_bugs - length(obj.alive_bugs));
+
+            obj.alive_bugs = [obj.alive_bugs, obj.next_bug_index:new_next_bug_index-1];
+            obj.next_bug_index = new_next_bug_index;
             obj.alive_bugs(killed_bugs) = [];
             assert(length(obj.alive_bugs) == n_bugs)
             for i_bug = 1:n_bugs
