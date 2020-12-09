@@ -73,8 +73,11 @@ figure(1)
 
 start_time = tic;
 
+
 for t = 1:time_steps
     tic
+    [environment] = Environment.update_environment(environment);
+
     [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = Bug.update_bugs(bug_list, egg_list, room_list,   ...
                 human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs, hungry_move_threshold,    ...
                 environment, house, food_lattice, sticky_pads, move_out_of_hiding_probability,                      ...
@@ -84,8 +87,8 @@ for t = 1:time_steps
     
     [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_probability,house,time_constant);
     
-    [human_list, food_lattice, environment] = Human.update_humans(human_list, house, environment, food_lattice);
-    
+    [human_list, food_lattice] = Human.update_humans(human_list, house, environment, food_lattice, room_list);
+
     t1 = toc;
     statistics = statistics.update_statistics(bug_list, t, killed_bugs);
     t2 = toc;
