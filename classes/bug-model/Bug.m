@@ -217,7 +217,9 @@ classdef Bug
         end
         
         function [death_standard,death_hunger, human_list] = update_death(obj, ...
-                human_list, notice_probability, kill_if_noticed_probability, time_constant)
+                human_list, notice_probability, kill_if_noticed_probability,   ...
+                environment)
+            time_constant = environment.time_constant;
                 
             if obj.age >= obj.adult_age && obj.age <= obj.death_age
                 death_hunger = 30 * 24 * time_constant;
@@ -230,7 +232,9 @@ classdef Bug
                 death_standard = 0;
                 for i_human = 1:length(human_list)
                     human = human_list(i_human);
-                    if isequal(obj.room.room_name, human.room.room_name) && ~obj.in_hiding_place
+                    if isequal(obj.room.room_name, human.room.room_name) && ~obj.in_hiding_place && ~environment.night
+                        fprintf('Bug is in room %s at the same time as human!\n', obj.room.room_name)
+                        pause()
                         if rand < notice_probability
                             % human.noticed_bug = 1;
                             if rand < kill_if_noticed_probability
@@ -257,18 +261,22 @@ classdef Bug
             for bug_index = 1:length(bug_list)
                 bug = bug_list(bug_index);           
                 
-                [death_standard,death_hunger, human_list] = bug.update_death(human_list, ...
-                    notice_probability, kill_if_noticed_probability, environment.time_constant);
+                [death_standard,death_hunger, human_list] = bug.update_death(  ...
+                human_list, notice_probability, kill_if_noticed_probability,   ...
+                environment);
 
                 if death_standard == 1
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
                 elseif death_standard == 0
                     if bug.hunger >= (death_hunger - hungry_move_threshold)
+                        disp('1')
                         [bug, sticky_pads] = bug.hungry_move(house,sticky_pads,food_lattice);
                     elseif (environment.night && rand < move_randomly_at_night_probability) || ...
                             (~environment.night && rand < move_randomly_at_day_probability)
+                        disp('2')
                         [bug, sticky_pads] = bug.random_move(house,room_list,sticky_pads,change_room_probability);
                     else
+                        disp('3')
                         [bug, sticky_pads] = bug.regular_move(house, room_list, food_lattice, human_list, sticky_pads, ...
                             move_out_of_hiding_probability, change_room_probability, change_rooms_if_no_food_probability, ...
                             move_out_of_hiding_probability_if_human_in_room);  

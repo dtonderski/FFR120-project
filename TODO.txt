@@ -3,9 +3,11 @@
 		i) when you find a source for a parameter, put the parameter, value and source 			(Ruxin)
 		into parameters.txt										
 	g) all(?) movement probabilities should scale with hunger						(Ruxin) DONE (a bit different, threshold)
-	i) think about movement at night - should probably prioritize food					(David)	
-	j) if bug isn't hidden and there's a human in the room, the bug should die				(David) URGENT
-	k) adult age should be 40-80 days									(Ruxin) URGENT
+	i) think about movement at night - should probably prioritize food, big probability of changing room	(David)
+	j) maybe don't move into rooms with humans?	
+	k) if bug isn't hidden and there's a human in the room, the bug should die				(David) DONE (probability)
+	l) adult age should be 40-80 days									(Ruxin) URGENT
+ 
 
 2. Human behaviour												(Joakim) URGENT
 	a) add sleeping property										(Joakim)

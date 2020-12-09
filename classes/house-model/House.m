@@ -40,7 +40,7 @@ classdef House
                     return
                 end
             end
-            error("Couldn't find room!");
+            error(sprintf("Couldn't find room %s!\n", string(room_name)));
         end
         
         function obj = add_room(obj, room)

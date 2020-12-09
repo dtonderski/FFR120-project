@@ -15,16 +15,16 @@ house = House.create_default_house(room_list);
 time_constant = 6; % time steps in one hour
 environment = Environment(house, time_constant); 
 
-human1 = Human(house.find_room("Living area"),1);
-human2 = Human(house.find_room("Kitchen"),2);
+human1 = Human(house.find_room("Living area"), "Bedroom 1");
+human2 = Human(house.find_room("Kitchen"),"Bedroom 2");
 %human3 = Human(house.find_room("Toilet"));
 
 human_list = [human1, human2]; %, human3];
 
-bug1 = Bug(1, 1, house, time_constant);
-bug2 = Bug(5, 5, house, time_constant);
-bug3 = Bug(2, 2, house, time_constant);
-bug4 = Bug(3, 3, house, time_constant);
+bug1 = Bug(2,2, house, time_constant);
+bug2 = Bug(3,3, house, time_constant);
+bug3 = Bug(4,4, house, time_constant);
+bug4 = Bug(5,5, house, time_constant);
 
 bug1.age = randi([1,bug1.death_age],1);
 bug2.age = randi([1,bug2.death_age],1);
@@ -32,7 +32,7 @@ bug3.age = randi([1, bug3.death_age],1);
 bug4.age = randi([1, bug4.death_age],1);
 % bug1.age = bug1.reproduction_age - 1;
 % bug2.age = bug2.death_age - 10;
-bug_list = [bug1,bug2, bug3, bug4];
+bug_list = [bug1];%,bug2, bug3, bug4];
 
 
 egg = Egg(0,0,0,time_constant);
@@ -54,22 +54,22 @@ reproduction_interval = 30*24*time_constant; % 30 days
 hatch_probability = 0.5;
 hungry_move_threshold = 0.6;
 move_out_of_hiding_probability = 0.05;
-move_out_of_hiding_probability_if_human_in_room = 0;
+move_out_of_hiding_probability_if_human_in_room = 0.001;
 move_randomly_at_day_probability = 0.01;
-move_randomly_at_night_probability = 1;
+move_randomly_at_night_probability = 0.4;
 change_room_probability = 0.01;
 change_rooms_if_no_food_probability = 0.05;
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
-time_steps = 10000;
+time_steps = 100000;
+should_plot = true;
+
 
 statistics = Statistics(bug_list, time_steps, house);
 
-should_plot = false;
 
 figure(1)
 [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads, time_constant);
-
 
 start_time = tic;
 
@@ -77,6 +77,7 @@ start_time = tic;
 for t = 1:time_steps
     tic
     [environment] = Environment.update_environment(environment);
+    [human_list, food_lattice] = Human.update_humans(human_list, house, environment, food_lattice, room_list);
 
     [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = Bug.update_bugs(bug_list, egg_list, room_list,   ...
                 human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs, hungry_move_threshold,    ...
@@ -87,14 +88,13 @@ for t = 1:time_steps
     
     [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_probability,house,time_constant);
     
-    [human_list, food_lattice] = Human.update_humans(human_list, house, environment, food_lattice, room_list);
 
     t1 = toc;
-    statistics = statistics.update_statistics(bug_list, t, killed_bugs);
+    statistics = statistics.update_statistics(bug_list, t);
     t2 = toc;
     
     if should_plot
-        [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5);
+        [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5, time_constant);
         title(get_title(t, bug_list, environment), 'interpreter', 'latex');
         shg;
     end
@@ -102,18 +102,13 @@ for t = 1:time_steps
         break
     end
     t3 = toc;
-    fprintf('t is %d. Iteration time - %.5f. Calculation time - %.5f. Statistics time - %.5f.\n', t, t3, t1, t2-t1)
+    %fprintf('t is %d, n_bugs = %d, Iteration time - %.5f. Calculation time - %.5f. Statistics time - %.5f.\n', t, length(bug_list), t3, t1, t2-t1)
 end
 fprintf('Simulation completed. Total time - %.5f. Number of time steps - %d.\n', toc(start_time), t)
-figure(3)
-clf
-[p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5, time_constant);
-title(get_title(t, bug_list, environment), 'interpreter', 'latex');
+
 %%
-for i = 1:size(statistics.heatmap_data,3)
-    figure(i+1)
-    statistics.show_heatmap(i)
-end
+figure
+statistics.show_heatmap;
 
 function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads ,time_constant)
     clf
@@ -141,5 +136,5 @@ function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, 
 end
 
 function title = get_title(t, bug_list, environment)
-    title = sprintf('$t = %d, n_{bugs} = %d$, night = %d', t, length(bug_list), environment.determine_night().night);
+    title = sprintf('$t = %d, n_{bugs} = %d$, night = %d', t, length(bug_list), environment.night);
 end
