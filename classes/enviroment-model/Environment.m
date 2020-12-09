@@ -83,6 +83,7 @@ classdef Environment
 
             environment = environment.increase_time();
             environment = environment.determine_weekend();
+            environment = environment.determine_night();
 
         end
         
