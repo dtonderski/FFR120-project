@@ -216,7 +216,9 @@ classdef Bug
             egg = Egg(obj.x,obj.y,quantity,time_constant);
         end
         
-        function [death_standard,death_hunger] = update_death(obj,time_constant)
+        function [death_standard,death_hunger, human_list] = update_death(obj, ...
+                human_list, notice_probability, kill_if_noticed_probability, time_constant)
+                
             if obj.age >= obj.adult_age && obj.age <= obj.death_age
                 death_hunger = 30 * 24 * time_constant;
             elseif obj.age < obj.adult_age
@@ -226,21 +228,38 @@ classdef Bug
                 death_standard = 1;
             else
                 death_standard = 0;
+                for i_human = 1:length(human_list)
+                    human = human_list(i_human);
+                    if isequal(obj.room.room_name, human.room.room_name) && ~obj.in_hiding_place
+                        if rand < notice_probability
+                            % human.noticed_bug = 1;
+                            if rand < kill_if_noticed_probability
+                                fprintf('Bug is kil in room %s.\n', obj.room.room_name)
+                                death_standard = 1;
+                            end
+                        end
+                    end
+                    %human_list(i_human) = human;
+                end
             end         
         end
     end
     
     methods(Static)
-        function [bug_list,egg_list,food_lattice, sticky_pads] = update_bugs(bug_list, egg_list, room_list,         ...
-                human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs, hungry_move_threshold,    ...
-                environment, house, food_lattice, sticky_pads, move_out_of_hiding_probability,                      ...
-                move_randomly_at_day_probability, move_randomly_at_night_probability,change_room_probability,       ...
-                change_rooms_if_no_food_probability, move_out_of_hiding_probability_if_human_in_room)
+        function [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = update_bugs(bug_list, egg_list,     ...
+                room_list, human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs,                ...
+                hungry_move_threshold, environment, house, food_lattice, sticky_pads,                               ...
+                move_out_of_hiding_probability, move_randomly_at_day_probability,                                   ...
+                move_randomly_at_night_probability, change_room_probability, change_rooms_if_no_food_probability,   ...
+                move_out_of_hiding_probability_if_human_in_room, notice_probability, kill_if_noticed_probability)
     
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
-                bug = bug_list(bug_index);                
-                [death_standard,death_hunger] = update_death(bug,environment.time_constant);
+                bug = bug_list(bug_index);           
+                
+                [death_standard,death_hunger, human_list] = bug.update_death(human_list, ...
+                    notice_probability, kill_if_noticed_probability, environment.time_constant);
+
                 if death_standard == 1
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
                 elseif death_standard == 0
@@ -271,6 +290,7 @@ classdef Bug
                 bug_list(bug_index) = bug;
             end
             bug_list(bugs_to_kill_indices) = [];
+            killed_bugs = bugs_to_kill_indices;
         end
         
         function p = show_bugs(bug_list, marker_type, marker_size,time_constant)

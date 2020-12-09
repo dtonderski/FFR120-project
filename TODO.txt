@@ -23,8 +23,8 @@
 		ii) probability
 
 5. Statistics - what plots?											(David)
-	a) Number of bugs ( time )										(David) URGENT
-	b) Heatmap of bug position										(David) URGENT
+	a) Number of bugs ( time )										(David) DONE
+	b) Heatmap of bug position										(David) DONE
 
 6. Environment													(Joakim)
 	b) move environment updating to environment class							(Joakim)	
