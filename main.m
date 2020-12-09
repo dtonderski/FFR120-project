@@ -32,7 +32,7 @@ bug3.age = randi([1, bug3.death_age],1);
 bug4.age = randi([1, bug4.death_age],1);
 % bug1.age = bug1.reproduction_age - 1;
 % bug2.age = bug2.death_age - 10;
-bug_list = [bug1];%,bug2, bug3, bug4];
+bug_list = [bug1,bug2, bug3, bug4];
 
 
 egg = Egg(0,0,0,time_constant);
@@ -54,7 +54,7 @@ reproduction_interval = 30*24*time_constant; % 30 days
 hatch_probability = 0.5;
 hungry_move_threshold = 0.6;
 move_out_of_hiding_probability = 0.05;
-move_out_of_hiding_probability_if_human_in_room = 0.001;
+move_out_of_hiding_probability_if_human_in_room = 0;
 move_randomly_at_day_probability = 0.01;
 move_randomly_at_night_probability = 0.4;
 change_room_probability = 0.01;
@@ -62,7 +62,7 @@ change_rooms_if_no_food_probability = 0.05;
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
 time_steps = 100000;
-should_plot = true;
+should_plot = false;
 
 
 statistics = Statistics(bug_list, time_steps, house);
@@ -102,7 +102,7 @@ for t = 1:time_steps
         break
     end
     t3 = toc;
-    %fprintf('t is %d, n_bugs = %d, Iteration time - %.5f. Calculation time - %.5f. Statistics time - %.5f.\n', t, length(bug_list), t3, t1, t2-t1)
+    fprintf('t is %d, n_bugs = %d, Iteration time - %.5f. Calculation time - %.5f. Statistics time - %.5f.\n', t, length(bug_list), t3, t1, t2-t1)
 end
 fprintf('Simulation completed. Total time - %.5f. Number of time steps - %d.\n', toc(start_time), t)
 

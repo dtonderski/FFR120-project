@@ -50,8 +50,8 @@ classdef Bug
             room_start = obj.room.room_start_house;
             room_stop = obj.room.room_stop_house;
 
-            obj.x = room_start(1) + fix(rand * (room_stop(1) - room_start(1)) + 1);
-            obj.y = room_start(2) + fix(rand * (room_stop(2) - room_start(2)) + 1);
+            obj.x = room_start(1) + fix(rand * (room_stop(1) - room_start(1)+1));
+            obj.y = room_start(2) + fix(rand * (room_stop(2) - room_start(2)+1));
         end
         
         function [obj, sticky_pads] = check_if_on_sticky_pad(obj, sticky_pads)
@@ -114,7 +114,7 @@ classdef Bug
                 obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
             elseif obj.in_hiding_place
                 for human = human_list
-                    if isequal(human.room.room_name, obj.room.room_name) && human.sleeping
+                    if isequal(human.room.room_name, obj.room.room_name) && ~human.sleeping
                         if rand > move_out_of_hiding_probability_if_human_in_room
                             return
                         end
@@ -186,9 +186,11 @@ classdef Bug
                      food_locations_in_house = food_lattice.food_locations;
                      sticky_pad_locations_in_house = sticky_pads.pad_locations;
                      all_locations_in_house = [food_locations_in_house;sticky_pad_locations_in_house];
-                     index = randi([1,size(all_locations_in_house,1)]);
-                     obj.x = all_locations_in_house(index,1);
-                     obj.y = all_locations_in_house(index,2);                    
+                     if ~isempty(all_locations_in_house)
+                         index = randi([1,size(all_locations_in_house,1)]);
+                         obj.x = all_locations_in_house(index,1);
+                         obj.y = all_locations_in_house(index,2);        
+                     end
                  end
                  obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
                  [obj, sticky_pads] = check_if_on_sticky_pad(obj, sticky_pads);
@@ -234,7 +236,7 @@ classdef Bug
                     human = human_list(i_human);
                     if isequal(obj.room.room_name, human.room.room_name) && ~obj.in_hiding_place && ~environment.night
                         fprintf('Bug is in room %s at the same time as human!\n', obj.room.room_name)
-                        pause()
+                        %pause()
                         if rand < notice_probability
                             % human.noticed_bug = 1;
                             if rand < kill_if_noticed_probability
@@ -269,14 +271,11 @@ classdef Bug
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
                 elseif death_standard == 0
                     if bug.hunger >= (death_hunger - hungry_move_threshold)
-                        disp('1')
                         [bug, sticky_pads] = bug.hungry_move(house,sticky_pads,food_lattice);
                     elseif (environment.night && rand < move_randomly_at_night_probability) || ...
                             (~environment.night && rand < move_randomly_at_day_probability)
-                        disp('2')
                         [bug, sticky_pads] = bug.random_move(house,room_list,sticky_pads,change_room_probability);
                     else
-                        disp('3')
                         [bug, sticky_pads] = bug.regular_move(house, room_list, food_lattice, human_list, sticky_pads, ...
                             move_out_of_hiding_probability, change_room_probability, change_rooms_if_no_food_probability, ...
                             move_out_of_hiding_probability_if_human_in_room);  

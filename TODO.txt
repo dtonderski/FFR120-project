@@ -1,42 +1,40 @@
 1. Bug behaviour
 	d) make realistic parameters (German cockroach (link in Slack))
-		i) when you find a source for a parameter, put the parameter, value and source 			(Ruxin)
+		i) when you find a source for a parameter, put the parameter, value and source 					(Everyone)
 		into parameters.txt										
-	g) all(?) movement probabilities should scale with hunger						(Ruxin) DONE (a bit different, threshold)
-	i) think about movement at night - should probably prioritize food, big probability of changing room	(David)
-	j) maybe don't move into rooms with humans?	
-	k) if bug isn't hidden and there's a human in the room, the bug should die				(David) DONE (probability)
-	l) adult age should be 40-80 days									(Ruxin) URGENT
- 
+	i) at night - regular move, but with 10(?) times probabilities								(Ruxin)
+	j) don't move into rooms with humans											(David)
+	j) idea - maybe bug should move according to the same algorithm at night, but all probabilities should be higher? 	
+	k) sleeping is working													(David)
+	l) probabilities are multiplied with some kind of hunger factor								(Ruxin)
 
-2. Human behaviour												(Joakim) URGENT
-	a) add sleeping property										(Joakim)
-	b) change bedroom property to bedroom_name								(Joakim)
-	c) more realistic parameters										(Joakim)
-	d) clean percentage-wise										(Joakim)
+2. Human behaviour
+	a) de-hardcode food stuffs												(Joakim)
+	b) cleaning (Roulette wheel)												(Joakim)
+	c) more realistic parameters												(Everyone) 
 					
 3. House
 
 3. Food
 
-4. Bug control													(David)	
+4. Bug control															(David)	
 	a) pesticide												
 		i) can be put in hiding spots
 		ii) probability
 
-5. Statistics - what plots?											(David)
-	a) Number of bugs ( time )										(David) DONE
-	b) Heatmap of bug position										(David) DONE
+5. Statistics - what plots?													(David)
+	a) Plot bug steady state vs average food available at night start							(David)
 
-6. Environment													(Joakim)
-	b) move environment updating to environment class							(Joakim)	
+6. Environment															(Joakim)
 
 7. Documentation
 	a) Write all parameters in parameters.txt														
 
 8. Possible optimizations
 	a) house.get_food_locations_in_current_room could be optimized, as the bug now knows which room it is in
-	b) change house class so that room_list variable is consistent (separate wall_list and door_list, for example)	(David) 
+	b) change house class so that room_list variable is consistent (separate wall_list and door_list, for example)		(David) 
 	c) set a flag if room contains a human
-	d) de-hardcode hunger parameters										(NOT URGENT)
+	d) don't move out of hiding place with human
+9. Report
+	a) First report draft													(Joakim/David)
 
