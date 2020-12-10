@@ -42,7 +42,7 @@ classdef Human
     
     methods(Static)
     
-        function [human_list, food_lattice] = update_humans(human_list, house, environment, food_lattice, room_list, food_rate)
+        function [human_list, food_lattice] = update_humans(human_list, house, environment, food_lattice, room_list, food_rate, food_quantity, n_food_locations)
             
                 
             for human_index = 1:length(human_list)
@@ -64,7 +64,7 @@ classdef Human
                         % go eat 
                         human = human.change_room(house.find_room("Kitchen")); 
                             if rand < food_rate(1) % probability of leaving crumbs/food
-                                food_lattice = human.litter(food_lattice, 100, 1);
+                                food_lattice = human.litter(food_lattice, food_quantity, n_food_locations);
                             end
 
                     end 
@@ -85,7 +85,7 @@ classdef Human
                         human = human.change_room(house.find_room("Toilet"));
                         human.time_active = human.time_active +1; 
                             if rand < food_rate(4) % probability of leaving crumbs/food
-                                food_lattice = human.litter(food_lattice, 100, 1);
+                                food_lattice = human.litter(food_lattice, food_quantity, n_food_locations);
                             end
                         
                         elseif human.time_active < 2*environment.time_constant && (human.random_activity > 0.1 && human.random_activity < 0.3)
@@ -98,7 +98,7 @@ classdef Human
                         human = human.change_room(house.find_room("Living area"));
                         human.time_active = human.time_active +1; 
                             if rand < food_rate(2) % probability of leaving crumbs/food
-                                food_lattice = human.litter(food_lattice, 100, 1);
+                                food_lattice = human.litter(food_lattice, food_quantity, n_food_locations);
                             end
                         
                         elseif human.time_active < 2*environment.time_constant && (human.random_activity > 0.5 && human.random_activity < 0.8)
@@ -106,7 +106,7 @@ classdef Human
                         human = human.change_room(house.find_room("Kitchen"));
                         human.time_active = human.time_active +1; 
                             if rand < food_rate(1) % probability of leaving crumbs/food
-                                food_lattice = human.litter(food_lattice, 100, 1);
+                                food_lattice = human.litter(food_lattice, food_quantity, n_food_locations);
                             end
                        
                         elseif human.time_active < 1*environment.time_constant && (human.random_activity > 0.8)
@@ -153,7 +153,7 @@ classdef Human
                         human = human.change_room(house.find_room(human.bedroom_name));
                         human.sleeping = true;
                         if rand < food_rate(5) % probability of leaving crumbs/food
-                            food_lattice = human.litter(food_lattice, 100, 1);
+                            food_lattice = human.litter(food_lattice, food_quantity, n_food_locations);
                         end
                         end
                         
@@ -164,7 +164,7 @@ classdef Human
                     if environment.time_step_current_day <= 10*environment.time_constant && environment.time_step_current_day > 9*environment.time_constant
                         human = human.change_room(house.find_room("Kitchen"));    
                         if rand < food_rate(1) % probability of leaving crumbs/food
-                            food_lattice = human.litter(food_lattice, 100, 1);
+                            food_lattice = human.litter(food_lattice, food_quantity, n_food_locations);
                         end
                     end
                     
@@ -180,7 +180,7 @@ classdef Human
                         human = human.change_room(house.find_room("Toilet"));
                         human.time_active = human.time_active +1; 
                             if rand < food_rate(4) % probability of leaving crumbs/food
-                                food_lattice = human.litter(food_lattice, 100, 1);
+                                food_lattice = human.litter(food_lattice, food_quantity, n_food_locations);
                             end
                         
                         elseif human.time_active < 5*environment.time_constant && (human.random_activity > 0.1 && human.random_activity < 0.5)
@@ -193,7 +193,7 @@ classdef Human
                         human = human.change_room(house.find_room("Living area"));
                         human.time_active = human.time_active +1; 
                             if rand < food_rate(2) % probability of leaving crumbs/food
-                                food_lattice = human.litter(food_lattice, 100, 1);
+                                food_lattice = human.litter(food_lattice, food_quantity, n_food_locations);
                             end
                         
                         elseif human.time_active < 2*environment.time_constant && (human.random_activity > 0.8)
@@ -201,7 +201,7 @@ classdef Human
                         human = human.change_room(house.find_room("Kitchen"));
                         human.time_active = human.time_active +1; 
                             if rand < food_rate(1) % probability of leaving crumbs/food
-                                food_lattice = human.litter(food_lattice, 100, 1);
+                                food_lattice = human.litter(food_lattice, food_quantity, n_food_locations);
                             end
                         
                         else % break when done with activity

@@ -63,8 +63,10 @@ max_change_rooms_if_no_food_probability = 0.05;
 max_moving_probability = [max_move_out_of_hiding_probability, max_move_out_of_hiding_probability_if_human_in_room, max_change_room_probability, max_change_rooms_if_no_food_probability];
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
+food_quantity = 10;
+n_food_locations = 5;
 
-time_steps = 30000;
+time_steps = 20000;
 should_plot = false;
 
 
@@ -79,7 +81,8 @@ for t = 1:time_steps
     tic
     [environment] = Environment.update_environment(environment);
     
-    [human_list, food_lattice] = Human.update_humans(human_list, house, environment, food_lattice, room_list, food_rate);
+    [human_list, food_lattice] = Human.update_humans(human_list, house, environment, food_lattice, room_list,   ...
+        food_rate, food_quantity, n_food_locations);
 
     [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = Bug.update_bugs(bug_list, egg_list,     ...
                 room_list, human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs,                ...
@@ -107,8 +110,17 @@ end
 fprintf('Simulation completed. Total time - %.5f. Number of time steps - %d.\n', toc(start_time), t)
 
 %%
-figure
+figure(2)
+clf
 statistics.show_heatmap;
+%%
+figure(3)
+clf
+plot(smooth(statistics.n_bug_data,10000));
+%%
+figure(4)
+clf
+plot(statistics.available_food);
 
 function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads ,time_constant)
     clf
