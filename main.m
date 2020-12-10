@@ -35,7 +35,6 @@ bug4.age = randi([1, bug4.death_age],1);
 % bug1.hunger = 4315;
 bug_list = [bug1,bug2, bug3, bug4];
 
-
 egg = Egg(0,0,0,time_constant);
 egg_list = [egg];
 
@@ -43,10 +42,13 @@ sticky_pads = Sticky_pads(house);
 %sticky_pads = sticky_pads.add_sticky_pad([15,15]);
 
 food_lattice = Food_lattice(house);
-%food_lattice = human1.litter(food_lattice, 100, 4);
 
-randomActivity = 0;
-
+kitchen_rate = 0.1;
+livingarea_rate = 0.05;
+hallway_rate = 0.05;
+toilet_rate = 0.05;
+bedroom_rate = 0.01;
+food_rate = [kitchen_rate, livingarea_rate, hallway_rate, toilet_rate, bedroom_rate];
 
 reproduction_hunger = 14*24*time_constant;  % no food for continuous 2 weeks, cannot reproduce
 minEggs = 30;
@@ -62,22 +64,19 @@ max_moving_probability = [max_move_out_of_hiding_probability, max_move_out_of_hi
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
 time_steps = 100000;
-should_plot = false;
-
+should_plot = true ;
 
 statistics = Statistics(bug_list, time_steps, house);
-
 
 figure(1)
 [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads, time_constant);
 
 start_time = tic;
 
-
 for t = 1:time_steps
     tic
     [environment] = Environment.update_environment(environment);
-    [human_list, food_lattice] = Human.update_humans(human_list, house, environment, food_lattice, room_list);
+    [human_list, food_lattice] = Human.update_humans(human_list, house, environment, food_lattice, room_list, food_rate);
 
     [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = Bug.update_bugs(bug_list, egg_list,     ...
                 room_list, human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs,                ...
