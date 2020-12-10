@@ -1,5 +1,38 @@
-German cockroach
+GERMAN COCKROACH
 
+————————————————————————————————————PARAMETERS————————————————————————————————————
+
+1. LIFECYCLE (egg -> nymph -> adult)
+hatch_age: 15-30 days (egg -> nymph)
+adult_age: 40-80 days (nymph -> adult)
+first_reproduction_age: a week after becoming an adult
+death_age: 100-200 days
+
+2. REPRODUCTION
+number of eggs when reproduces once: a random integar between [30,120]
+reproduction_hunger: no food for continuous 2 weeks, cannot reproduce
+reproduction_interval: 30 days
+hatch_probability = 0.5 (an egg can grow to a nymph with 50% probability)
+
+3. MOVEMENT
+max_move_out_of_hiding_probability = 0.05;
+max_move_out_of_hiding_probability_if_human_in_room = 0;
+max_change_room_probability = 0.01;
+max_change_rooms_if_no_food_probability = 0.05;
+
+4. HUNGER
+a) hunger will increase 1 at each time step
+b) If an adult doesn't eat food for continuous 2 weeks, it cannot reproduce.
+   If an adult doesn't eat food for continuous 1 month, it will die.
+   If a bug just become a nymph (0 age) and it doesn't eat food for continuous 1 week, it will die.
+   If a bug is at the nymph stage, the longest time period that it can survive without food is between [7,30] days and is linearly related to its age.
+c) If a bug eats food, the hunger will decrease (minimum to 0)
+   A bug must eat on average once a day, or it will eventually die
+d) The above mentioned four moving probability will increase to 10 times at night, and the actual moving probability of each bug is linearly related to their hunger. The more hungry it is, the more probably it will move.
+e) If the bug will die in 1 hour with no food, it will implement hungry_move
+
+
+——————————————————————————————————BASIC INFORMATION——————————————————————————————————
 Some properties:
 cannot survive severe cold
 cannot fly
@@ -7,10 +40,6 @@ nocturnal, occasionally appears by day
 Life cycle: egg -> nymph -> adult (only adult can reproduce)
 Lay egg area: German cockroaches carry their eggs with them until they are ready to hatch. When it’s time for hatching, the female cockroach will drop the ootheca wherever she is.
 
-
-Update every day
-
-Parameters:
 maxEggs = 30-40 eggs in each ootheca; in a lifetime, almost 4-8 ootheca -> female)
 
 hatch_age = 15-30 days (average gestation period: egg -> nymph 28 days) 
@@ -20,9 +49,7 @@ reproduction_age = 47-132 days (40-125 days/ also another reference shows 40-84 
 death_age = 100-200 days; (3-6 months, female German cockroaches may live for more than 200 days.)
 			probaility
 
-
-reproduction_probability = ; 2-3 times in a life
-hatch_probability = ; (maybe do not need to consider this? only consider the final number of numph)
+reproduction_probability: 2-3 times in a life
 
 hunger increase in a time step: (without food and water, will die in 2 weeks)
 				nymph can live without food for 1 week;
@@ -30,21 +57,6 @@ hunger increase in a time step: (without food and water, will die in 2 weeks)
 				adult can live without food for 1 month;
 
 reproduction_hunger = ; (continuous no food for two weeks, cannot reproduce)
-
-death_hunger = 1
-
-hunger_decrease due to food: not 1 but percentage
-
-
-NOT specific:
-nocturnal, occasionally appears by day
-move_out_of_hiding_place_probability = 0.1;
-move_randomly_at_day_probability = 0.01;
-move_randomly_at_night_probability = 0.9;(ok)
-change_room_probability = 0.1;
-
-
-
 
 References:
 https://pestech.com/online-guides/cockroach-life-cycle/
