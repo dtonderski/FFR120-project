@@ -176,7 +176,7 @@ classdef Bug
             end
         end
         
-        function [obj, sticky_pads] = hungry_move(obj,house,room_list,sticky_pads,food_lattice)
+        function [obj, sticky_pads] = hungry_move(obj,house,room_list,human_list, sticky_pads,food_lattice)
             % this function works if the bug is very hungry. if food/sticky pad in
             % current room, must move to the food/sticky pad; else move to a random
             % room
@@ -272,7 +272,7 @@ classdef Bug
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
                 elseif death_standard == 0
                     if bug.hunger >= (death_hunger - hungry_move_threshold)
-                        [bug, sticky_pads] = bug.hungry_move(house,room_list,sticky_pads,food_lattice);
+                        [bug, sticky_pads] = bug.hungry_move(house,room_list,human_list, sticky_pads,food_lattice);
                     else
                         if environment.night
                             moving_probability = 10 .* max_moving_probability .* bug.hunger ./ death_hunger;
