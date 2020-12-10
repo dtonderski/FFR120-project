@@ -7,10 +7,11 @@ classdef Statistics
         n_bug_data;
         alive_bugs;
         next_bug_index;
+        available_food;
     end
     
     methods
-        function obj = Statistics(bug_list, time_steps, house)
+        function obj = Statistics(bug_list, time_steps, house, time_constant)
             n_bugs = length(bug_list);          
             
             obj.n_bug_data = zeros(1, time_steps+1);
@@ -21,12 +22,16 @@ classdef Statistics
                 bug = bug_list(i_bug);
                 obj.heatmap_data(bug.x, bug.y) = obj.heatmap_data(bug.x, bug.y) + 1;
             end
+            obj.available_food = zeros(1, ceil(time_steps/(24*time_constant)));
         end
         
-        function obj = update_statistics(obj, bug_list, t)
+        function obj = update_statistics(obj, bug_list, t, food_lattice, time_constant)
             obj.n_bug_data(t+1) = length(bug_list);
             for bug = bug_list
                 obj.heatmap_data(bug.x, bug.y) = obj.heatmap_data(bug.x, bug.y) + 1;  
+            end
+            if mod(t, 24*time_constant) == 0
+                obj.available_food(t/(24*time_constant)) = sum(sum(food_lattice.lattice));
             end
         end
         

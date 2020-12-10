@@ -15,9 +15,9 @@ house = House.create_default_house(room_list);
 time_constant = 6; % time steps in one hour
 environment = Environment(house, time_constant); 
 
-human1 = Human(house.find_room("Living area"), "Bedroom 1");
-human2 = Human(house.find_room("Kitchen"),"Bedroom 2");
-%human3 = Human(house.find_room("Toilet"));
+human1 = Human(house.find_room('Living area'), 'Bedroom 1');
+human2 = Human(house.find_room('Kitchen'),'Bedroom 2');
+%human3 = Human(house.find_room('Toilet'));
 
 human_list = [human1, human2]; %, human3];
 
@@ -63,10 +63,12 @@ max_change_rooms_if_no_food_probability = 0.05;
 max_moving_probability = [max_move_out_of_hiding_probability, max_move_out_of_hiding_probability_if_human_in_room, max_change_room_probability, max_change_rooms_if_no_food_probability];
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
-time_steps = 100000;
-should_plot = true ;
 
-statistics = Statistics(bug_list, time_steps, house);
+time_steps = 30000;
+should_plot = false;
+
+
+statistics = Statistics(bug_list, time_steps, house, time_constant);
 
 figure(1)
 [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads, time_constant);
@@ -76,6 +78,7 @@ start_time = tic;
 for t = 1:time_steps
     tic
     [environment] = Environment.update_environment(environment);
+    
     [human_list, food_lattice] = Human.update_humans(human_list, house, environment, food_lattice, room_list, food_rate);
 
     [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = Bug.update_bugs(bug_list, egg_list,     ...
@@ -87,7 +90,7 @@ for t = 1:time_steps
     
 
     t1 = toc;
-    statistics = statistics.update_statistics(bug_list, t);
+    statistics = statistics.update_statistics(bug_list, t, food_lattice, time_constant);
     t2 = toc;
     
     if should_plot
