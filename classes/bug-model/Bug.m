@@ -36,13 +36,22 @@ classdef Bug
             obj.reproduction_age = obj.adult_age + 7*24*time_constant; % can reproduce after being an adult for 1 week
         end
         
-        function obj = change_room_to_random_different(obj, room_list)
-            choose_two_rooms = randperm(length(room_list)-1,2);
-            if isequal(obj.room.room_name, room_list(choose_two_rooms(1)).room_name)
-                new_room_index = choose_two_rooms(2);
-            else
-                new_room_index = choose_two_rooms(1);
+        function obj = change_room_to_random_different(obj, room_list, human_list)
+            n_rooms = length(room_list)-1;
+            all_rooms(n_rooms) = {''};
+            for i_room = 1:n_rooms
+                all_rooms(i_room) = {room_list(i_room).room_name};
             end
+            
+            n_humans = length(human_list);
+            busy_rooms(n_humans+1) = {''};
+            for i_human = 1:n_humans
+                busy_rooms(i_human) = {human_list(i_human).room.room_name};
+            end
+            busy_rooms(n_humans+1) = {obj.room.room_name};
+            available_rooms = setdiff(all_rooms, busy_rooms);
+            
+            new_room_index = randi(length(available_rooms));
             obj.room = room_list(new_room_index);
         end
         
@@ -61,13 +70,13 @@ classdef Bug
             end
         end
         
-        function [obj,sticky_pads] = random_move(obj,house,room_list,sticky_pads,change_room_probability)
+        function [obj,sticky_pads] = random_move(obj,house,room_list, human_list,sticky_pads,change_room_probability)
             
             if obj.on_sticky_pad
                 return
             end
             if rand < change_room_probability 
-                obj = change_room_to_random_different(obj, room_list);
+                obj = change_room_to_random_different(obj, room_list, human_list);
             end      
             
             obj = move_randomly_within_room(obj);
@@ -108,7 +117,7 @@ classdef Bug
             if obj.on_sticky_pad
                 return
             elseif rand < change_room_probability
-                obj = change_room_to_random_different(obj, room_list);
+                obj = change_room_to_random_different(obj, room_list, human_list);
                 obj = move_randomly_within_room(obj);
                 [obj, sticky_pads] = check_if_on_sticky_pad(obj, sticky_pads);
                 obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
@@ -132,7 +141,7 @@ classdef Bug
                         obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
                         [obj, sticky_pads] = check_if_on_sticky_pad(obj, sticky_pads);
                     elseif rand < change_rooms_if_no_food_probability
-                        obj = change_room_to_random_different(obj, room_list);
+                        obj = change_room_to_random_different(obj, room_list, human_list);
                         obj = move_randomly_within_room(obj);
                         [obj, sticky_pads] = check_if_on_sticky_pad(obj, sticky_pads);
                         obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
@@ -153,15 +162,15 @@ classdef Bug
 
                     if isempty(food_locations_in_room) && isempty(free_sticky_pad_locations_in_room)
                         if rand < change_rooms_if_no_food_probability
-                            obj = change_room_to_random_different(obj, room_list);
+                            obj = change_room_to_random_different(obj, room_list, human_list);
                             obj = move_randomly_within_room(obj);
                             [obj, sticky_pads] = check_if_on_sticky_pad(obj, sticky_pads);
                             obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
                         else
-                            [obj,sticky_pads] = random_move(obj,house,room_list,sticky_pads,change_room_probability);
+                            [obj,sticky_pads] = random_move(obj,house,room_list,human_list,sticky_pads,change_room_probability);
                         end
                     else
-                        [obj,sticky_pads] = random_move(obj,house,room_list,sticky_pads,change_room_probability);
+                        [obj,sticky_pads] = random_move(obj,house,room_list,human_list,sticky_pads,change_room_probability);
                     end
                 end
             end
@@ -183,7 +192,7 @@ classdef Bug
                      obj.y = all_locations_in_room(new_location_index, 2);
                      
                  else
-                     obj = change_room_to_random_different(obj, room_list);
+                     obj = change_room_to_random_different(obj, room_list, human_list);
                      obj = move_randomly_within_room(obj);
                  end
                  obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
@@ -228,7 +237,7 @@ classdef Bug
                 death_standard = 0;
                 for i_human = 1:length(human_list)
                     human = human_list(i_human);
-                    if isequal(obj.room.room_name, human.room.room_name) && ~obj.in_hiding_place && ~environment.night
+                    if isequal(obj.room.room_name, human.room.room_name) && ~obj.in_hiding_place && ~human.sleeping     
                         fprintf('Bug is in room %s at the same time as human!\n', obj.room.room_name)
                         %pause()
                         if rand < notice_probability

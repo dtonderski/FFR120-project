@@ -140,7 +140,7 @@ classdef Human
 
                     if environment.time_step_current_day <= 9*environment.time_constant
                         
-                        if human.room.room_name ~= human.bedroom_name
+                        if ~isequal(human.room.room_name, human.bedroom_name)
                         human = human.change_room(house.find_room(human.bedroom_name));
                         human.sleeping = true;
                         end

@@ -3,9 +3,8 @@
 		i) when you find a source for a parameter, put the parameter, value and source 					(Everyone)
 		into parameters.txt										
 	i) at night - regular move, but with 10(?) times probabilities								(Ruxin)
-	j) don't move into rooms with humans											(David)
-	j) idea - maybe bug should move according to the same algorithm at night, but all probabilities should be higher? 	
-	k) sleeping is working													(David)
+	j) don't move into rooms with humans											(David)	DONE
+	k) sleeping is working													(David) DONE
 	l) probabilities are multiplied with some kind of hunger factor								(Ruxin)
 
 2. Human behaviour
@@ -23,7 +22,7 @@
 		ii) probability
 
 5. Statistics - what plots?													(David)
-	a) Plot bug steady state vs average food available at night start							(David)
+	a) Plot bug steady state vs average food available at night start							(David)	DONE
 
 6. Environment															(Joakim)
 
