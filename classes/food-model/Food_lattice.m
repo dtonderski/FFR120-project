@@ -59,6 +59,7 @@ classdef Food_lattice
 
         end
         
+        
         function obj = remove_quantity_of_food(obj,location,food_quantity)
             current_food = obj.lattice(location(1), location(2));
             if current_food ~= 0
