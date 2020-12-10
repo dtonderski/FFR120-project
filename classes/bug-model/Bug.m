@@ -167,10 +167,10 @@ classdef Bug
             end
         end
         
-        function [obj, sticky_pads] = hungry_move(obj,house,sticky_pads,food_lattice)
+        function [obj, sticky_pads] = hungry_move(obj,house,room_list,sticky_pads,food_lattice)
             % this function works if the bug is very hungry. if food/sticky pad in
-            % current room, must move to the food; else move to food/sticky pad in
-            % other rooms
+            % current room, must move to the food/sticky pad; else move to a random
+            % room
              if obj.on_sticky_pad
                 return
              else
@@ -181,16 +181,10 @@ classdef Bug
                      new_location_index = randi([1, size(all_locations_in_room, 1)]);
                      obj.x = all_locations_in_room(new_location_index, 1);
                      obj.y = all_locations_in_room(new_location_index, 2);
-                   
+                     
                  else
-                     food_locations_in_house = food_lattice.food_locations;
-                     sticky_pad_locations_in_house = sticky_pads.pad_locations;
-                     all_locations_in_house = [food_locations_in_house;sticky_pad_locations_in_house];
-                     if ~isempty(all_locations_in_house)
-                         index = randi([1,size(all_locations_in_house,1)]);
-                         obj.x = all_locations_in_house(index,1);
-                         obj.y = all_locations_in_house(index,2);        
-                     end
+                     obj = change_room_to_random_different(obj, room_list);
+                     obj = move_randomly_within_room(obj);
                  end
                  obj.in_hiding_place = house.is_hiding_place(obj.x,obj.y);
                  [obj, sticky_pads] = check_if_on_sticky_pad(obj, sticky_pads);
@@ -255,30 +249,34 @@ classdef Bug
         function [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = update_bugs(bug_list, egg_list,     ...
                 room_list, human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs,                ...
                 hungry_move_threshold, environment, house, food_lattice, sticky_pads,                               ...
-                move_out_of_hiding_probability, move_randomly_at_day_probability,                                   ...
-                move_randomly_at_night_probability, change_room_probability, change_rooms_if_no_food_probability,   ...
-                move_out_of_hiding_probability_if_human_in_room, notice_probability, kill_if_noticed_probability)
-    
+                max_moving_probability, notice_probability, kill_if_noticed_probability)
+            
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
-                bug = bug_list(bug_index);           
+                bug = bug_list(bug_index);
                 
                 [death_standard,death_hunger, human_list] = bug.update_death(  ...
-                human_list, notice_probability, kill_if_noticed_probability,   ...
-                environment);
-
+                    human_list, notice_probability, kill_if_noticed_probability,   ...
+                    environment);
+                
                 if death_standard == 1
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
                 elseif death_standard == 0
                     if bug.hunger >= (death_hunger - hungry_move_threshold)
-                        [bug, sticky_pads] = bug.hungry_move(house,sticky_pads,food_lattice);
-                    elseif (environment.night && rand < move_randomly_at_night_probability) || ...
-                            (~environment.night && rand < move_randomly_at_day_probability)
-                        [bug, sticky_pads] = bug.random_move(house,room_list,sticky_pads,change_room_probability);
+                        [bug, sticky_pads] = bug.hungry_move(house,room_list,sticky_pads,food_lattice);
                     else
+                        if environment.night
+                            moving_probability = 10 .* max_moving_probability .* bug.hunger ./ death_hunger;
+                        elseif ~environment.night
+                            moving_probability = max_moving_probability .* bug.hunger ./ death_hunger;
+                        end
+                        move_out_of_hiding_probability = moving_probability(1);
+                        move_out_of_hiding_probability_if_human_in_room = moving_probability(2);
+                        change_room_probability = moving_probability(3);
+                        change_rooms_if_no_food_probability = moving_probability(4);
                         [bug, sticky_pads] = bug.regular_move(house, room_list, food_lattice, human_list, sticky_pads, ...
                             move_out_of_hiding_probability, change_room_probability, change_rooms_if_no_food_probability, ...
-                            move_out_of_hiding_probability_if_human_in_room);  
+                            move_out_of_hiding_probability_if_human_in_room);
                     end
                     [bug,food_lattice] = bug.consume(food_lattice,environment.time_constant);
                     bug = bug.grow();

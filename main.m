@@ -30,8 +30,9 @@ bug1.age = randi([1,bug1.death_age],1);
 bug2.age = randi([1,bug2.death_age],1);
 bug3.age = randi([1, bug3.death_age],1);
 bug4.age = randi([1, bug4.death_age],1);
-% bug1.age = bug1.reproduction_age - 1;
+% bug1.age = bug1.adult_age;
 % bug2.age = bug2.death_age - 10;
+% bug1.hunger = 4315;
 bug_list = [bug1,bug2, bug3, bug4];
 
 
@@ -52,13 +53,12 @@ minEggs = 30;
 maxEggs = 120;
 reproduction_interval = 30*24*time_constant; % 30 days
 hatch_probability = 0.5;
-hungry_move_threshold = 0.6;
-move_out_of_hiding_probability = 0.05;
-move_out_of_hiding_probability_if_human_in_room = 0;
-move_randomly_at_day_probability = 0.01;
-move_randomly_at_night_probability = 0.4;
-change_room_probability = 0.01;
-change_rooms_if_no_food_probability = 0.05;
+hungry_move_threshold = time_constant;
+max_move_out_of_hiding_probability = 0.05;
+max_move_out_of_hiding_probability_if_human_in_room = 0;
+max_change_room_probability = 0.01;
+max_change_rooms_if_no_food_probability = 0.05;
+max_moving_probability = [max_move_out_of_hiding_probability, max_move_out_of_hiding_probability_if_human_in_room, max_change_room_probability, max_change_rooms_if_no_food_probability];
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
 time_steps = 100000;
@@ -79,12 +79,10 @@ for t = 1:time_steps
     [environment] = Environment.update_environment(environment);
     [human_list, food_lattice] = Human.update_humans(human_list, house, environment, food_lattice, room_list);
 
-    [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = Bug.update_bugs(bug_list, egg_list, room_list,   ...
-                human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs, hungry_move_threshold,    ...
-                environment, house, food_lattice, sticky_pads, move_out_of_hiding_probability,                      ...
-                move_randomly_at_day_probability, move_randomly_at_night_probability,change_room_probability,       ...
-                change_rooms_if_no_food_probability, move_out_of_hiding_probability_if_human_in_room,               ...
-                notice_probability, kill_if_noticed_probability);
+    [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = Bug.update_bugs(bug_list, egg_list,     ...
+                room_list, human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs,                ...
+                hungry_move_threshold, environment, house, food_lattice, sticky_pads,                               ...
+                max_moving_probability, notice_probability, kill_if_noticed_probability);
     
     [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_probability,house,time_constant);
     
