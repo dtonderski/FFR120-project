@@ -16,6 +16,7 @@ classdef Room
         furniture_list
         room_color
         hiding_place_color = [1 0 0]
+        food_in_room
     end
     
     methods
@@ -28,6 +29,7 @@ classdef Room
             obj.room_color = room_color;
             obj.lattice_with_furniture = zeros(room_stop(1) - room_start(1) + 1, room_stop(2) - room_start(2) + 1);
             obj.furniture_list = [];
+            obj.food_in_room = [];
         end
         
         function obj = add_hiding_place(obj, hiding_place_start, hiding_place_stop)
