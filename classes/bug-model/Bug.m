@@ -238,12 +238,12 @@ classdef Bug
                 for i_human = 1:length(human_list)
                     human = human_list(i_human);
                     if isequal(obj.room.room_name, human.room.room_name) && ~obj.in_hiding_place && ~human.sleeping     
-                        fprintf('Bug is in room %s at the same time as human!\n', obj.room.room_name)
+                        %fprintf('Bug is in room %s at the same time as human!\n', obj.room.room_name)
                         %pause()
                         if rand < notice_probability
                             % human.noticed_bug = 1;
                             if rand < kill_if_noticed_probability
-                                fprintf('Bug is kil in room %s.\n', obj.room.room_name)
+                                %fprintf('Bug is kil in room %s.\n', obj.room.room_name)
                                 death_standard = 1;
                             end
                         end
@@ -290,7 +290,7 @@ classdef Bug
                     [bug,food_lattice] = bug.consume(food_lattice,environment.time_constant);
                     bug = bug.grow();
                     
-                    if bug.age == bug.reproduction_age
+                    if bug.age >= bug.reproduction_age
                         if bug.in_hiding_place && bug.hunger < reproduction_hunger
                             numberOfEggs = randi([minEggs,maxEggs],1);
                             egg = bug.lay_eggs(numberOfEggs,environment.time_constant);
@@ -321,5 +321,15 @@ classdef Bug
             end
             p = scatter(X,Y,marker_size,color,marker_type);
         end
+        
+        function n_adult_bugs = get_n_adult_bugs(bug_list)
+            n_adult_bugs = 0;
+            for bug = bug_list
+                if bug.age >= bug.adult_age
+                    n_adult_bugs = n_adult_bugs + 1;
+                end
+            end
+        end
+        
     end
 end
