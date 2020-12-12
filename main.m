@@ -66,7 +66,7 @@ kill_if_noticed_probability = 0.2;
 food_quantity = 10;
 n_food_locations = 5;
 
-time_steps = 20000;
+time_steps = 105120;
 should_plot = false;
 
 
@@ -116,11 +116,13 @@ statistics.show_heatmap;
 %%
 figure(3)
 clf
-plot(smooth(statistics.n_bug_data,10000));
+plot((statistics.n_bug_data));
+fprintf('Mean alive bugs were %d.\n', mean(statistics.n_bug_data));
 %%
 figure(4)
 clf
 plot(statistics.available_food);
+fprintf('Mean available food was %.2f.\n', mean(statistics.available_food))
 
 function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads ,time_constant)
     clf
