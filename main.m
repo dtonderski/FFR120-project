@@ -22,7 +22,7 @@ max_change_rooms_if_no_food_probability = 0.05;
 max_moving_probability = [max_move_out_of_hiding_probability, max_move_out_of_hiding_probability_if_human_in_room, max_change_room_probability, max_change_rooms_if_no_food_probability];
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
-time_steps = 10000;%105120;
+time_steps = 105120;
 should_plot = false;
 
 kitchen_rate = 0.1;
