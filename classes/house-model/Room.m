@@ -78,7 +78,7 @@ classdef Room
 
             if ~(isequal(obj.room_name, 'wall') || isequal(obj.room_name, 'door'))
                 text_pos = (obj.room_start_house + obj.room_stop_house)/2;
-                text(text_pos(1), text_pos(2), obj.room_name, 'HorizontalAlignment','center', 'VerticalAlignment', 'middle');
+                text(text_pos(1), text_pos(2), obj.room_name, 'HorizontalAlignment','center', 'VerticalAlignment', 'middle', 'fontsize', 15);
             end
             
             [row_hidden, col_hidden] = find(obj.lattice_with_furniture == -1);
