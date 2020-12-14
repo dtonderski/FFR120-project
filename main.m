@@ -144,7 +144,7 @@ function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, 
     p5 = sticky_pads.show_pads('.', 1000, 'cyan');
     p3 = Bug.show_bugs(bug_list, '.', 1000,time_constant);
     p4 = Egg.show_eggs(egg_list,'o',20,time_constant);  
-    title(get_title(environment), 'interpreter', 'latex');
+    title(get_title(environment), 'interpreter', 'latex', 'fontsize', 20);
     shg;
 end
 
