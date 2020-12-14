@@ -319,6 +319,7 @@ classdef Bug
                 Y(i) = bug.y;
                 color(i,:) = cmap(fix(bug.age/24/time_constant) + 1,:);
             end
+            color = [0, 0.4, 0];
             p = scatter(X,Y,marker_size,color,marker_type);
         end
         

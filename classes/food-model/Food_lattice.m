@@ -82,8 +82,8 @@ classdef Food_lattice
                 X(i_location) = location(1);
                 Y(i_location) = location(2);
             end
-
-            p = scatter(X,Y, markerSize, markerType, color);
+        
+            p = scatter(X,Y, markerSize, markerType, color, 'MarkerFaceColor',color);
         end
         
         function food_locations_in_area = get_food_locations_in_area(obj, area_start, area_stop)

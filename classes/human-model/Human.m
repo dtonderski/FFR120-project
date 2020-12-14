@@ -232,7 +232,7 @@ classdef Human
                 X(i) = room_center(1);
                 Y(i) = room_center(2);
             end
-            p = scatter(X,Y,marker_size,marker_type,color);
+            p = scatter(X,Y,marker_size,marker_type,color, 'LineWidth', 3);
         end
     end
 end

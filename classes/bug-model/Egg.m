@@ -66,8 +66,9 @@ classdef Egg
                     Y(i) = egg.egg_location(2);
                     color(i,:) = cmap(fix(egg.age/24/time_constant) + 1,:);
                 end
+                color = [0 0 0];
                 
-                p = scatter(X,Y,marker_size,color,marker_type);
+                p = scatter(X,Y,marker_size,color,marker_type, 'MarkerFaceColor', [1 1 1]);
             end
         end
 end

@@ -15,7 +15,7 @@ classdef Room
         lattice_with_furniture
         furniture_list
         room_color
-        hiding_place_color = [1 0 0]
+        hiding_place_color = [1 0.5 0.5]
         food_in_room
     end
     

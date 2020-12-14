@@ -1,3 +1,8 @@
+0. Video
+	a)
+	b) title should show time, larger title
+	e) remove axis labels
+
 1. Bug behaviour										
 	a) de-hardcode night movement factor											(David)
 	b) make realistic parameters (German cockroach (link in Slack))

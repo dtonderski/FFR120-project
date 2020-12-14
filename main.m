@@ -23,7 +23,7 @@ max_moving_probability = [max_move_out_of_hiding_probability, max_move_out_of_hi
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
 time_steps = 105120;
-should_plot = false;
+should_plot = true;
 
 kitchen_rate = 0.1;
 livingarea_rate = 0.05;
@@ -32,7 +32,7 @@ toilet_rate = 0.05;
 bedroom_rate = 0.01;
 food_rate = [kitchen_rate, livingarea_rate, hallway_rate, toilet_rate, bedroom_rate];
 
-food_quantity_array = [70,80,90,100];%1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+food_quantity_array = 20;%[1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
 n_food_locations_array = min(round(food_quantity_array/2), 10);
 
 for i_simulation = 1:length(food_quantity_array)
@@ -75,8 +75,8 @@ for i_simulation = 1:length(food_quantity_array)
 
     statistics = Statistics(bug_list, time_steps, house, time_constant);
 
-    % figure(1)
-    % [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads, time_constant);
+    figure(1)
+    [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads, time_constant);
 
     start_time = tic;
 
@@ -100,10 +100,9 @@ for i_simulation = 1:length(food_quantity_array)
         t2 = toc;
 
         if should_plot
-            [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5, time_constant);
-            title(get_title(t, bug_list, environment), 'interpreter', 'latex');
-            shg;
+            [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads,environment, p1, p2, p3, p4, p5, time_constant);
         end
+        
         if length(bug_list) < 1 && length(egg_list) < 1
             break
         end
@@ -115,37 +114,25 @@ for i_simulation = 1:length(food_quantity_array)
     fprintf('Simulation %d completed. Total time - %.5f. Number of time steps - %d.\n', i_simulation, toc(start_time), t)
     save(sprintf('statistics/food_quantity%d.mat', food_quantity), 'statistics');
 end
-% %%
-% figure(2)
-% clf
-% statistics.show_heatmap;
-% %%
-% figure(3)
-% clf
-% plot((statistics.n_bug_data));
-% fprintf('Mean alive bugs were %d.\n', mean(statistics.n_bug_data));
-% hold on
-% plot([1:length(statistics.n_adult_bugs_data)]*24*time_constant, (statistics.n_adult_bugs_data));
-% fprintf('Mean adult bugs were %d.\n', mean(statistics.n_adult_bugs_data));
-% 
-% %%
-% figure(4)
-% clf
-% plot(statistics.available_food);
-% fprintf('Mean available food was %.2f.\n', mean(statistics.available_food))
 
-function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads ,time_constant)
+function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads,time_constant)
     clf
     hold on
     house.show_house();
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
-    p2 = food_lattice.show_food('.', 1000, 'blue');
+    p2 = food_lattice.show_food('d', 15, 'blue');
     p5 = sticky_pads.show_pads('.', 1000, 'cyan');
     p3 = Bug.show_bugs(bug_list, '.', 1000,time_constant);
-    p4 = Egg.show_eggs(egg_list,'.',300,time_constant);
+    p4 = Egg.show_eggs(egg_list,'o',15,time_constant);
+    set(gca,'YTick',[]);
+    set(gca,'YTickLabel',[]);
+    set(gca,'XTick',[]);
+    set(gca,'XTickLabel',[]);
+    %title(get_title(environment), 'interpreter', 'latex');
+    shg;
 end
 
-function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads, p1, p2, p3, p4, p5,time_constant)
+function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, egg_list, sticky_pads,environment, p1, p2, p3, p4, p5,time_constant)
     hold on
     delete(p1);
     delete(p2);
@@ -153,12 +140,14 @@ function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, 
     delete(p4);
     delete(p5);
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
-    p2 = food_lattice.show_food('.', 1000, 'blue');
+    p2 = food_lattice.show_food('d', 20, 'blue');
     p5 = sticky_pads.show_pads('.', 1000, 'cyan');
     p3 = Bug.show_bugs(bug_list, '.', 1000,time_constant);
-    p4 = Egg.show_eggs(egg_list,'.',300,time_constant);  
+    p4 = Egg.show_eggs(egg_list,'o',20,time_constant);  
+    title(get_title(environment), 'interpreter', 'latex');
+    shg;
 end
 
-function title = get_title(t, bug_list, environment)
-    title = sprintf('$t = %d, n_{bugs} = %d$, night = %d', t, length(bug_list), environment.night);
+function title = get_title(environment)
+    title = sprintf('Day %d of simulation, time is %s.', environment.week*7 + environment.day, environment.get_time_string);
 end

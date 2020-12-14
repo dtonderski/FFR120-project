@@ -71,7 +71,14 @@ classdef Environment
             else
                 obj.weekend = false;
             end
-        end        
+        end      
+        
+        function timeString = get_time_string(obj)
+            time = obj.time_step_current_day-1;
+            minutes = mod(time, obj.time_constant)*10;
+            hours = ((time-minutes/10) / (obj.time_constant));
+            timeString = sprintf('%02d:%02d', hours, minutes);
+        end
     end
     
     methods(Static)
