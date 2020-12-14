@@ -32,7 +32,7 @@ toilet_rate = 0.05;
 bedroom_rate = 0.01;
 food_rate = [kitchen_rate, livingarea_rate, hallway_rate, toilet_rate, bedroom_rate];
 
-food_quantity_array = [1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
+food_quantity_array = [70,80,90,100];%1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
 n_food_locations_array = min(round(food_quantity_array/2), 10);
 
 for i_simulation = 1:length(food_quantity_array)
