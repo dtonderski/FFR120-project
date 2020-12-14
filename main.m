@@ -13,16 +13,17 @@ reproduction_hunger = 14*24*time_constant;  % no food for continuous 2 weeks, ca
 minEggs = 30;
 maxEggs = 120;
 reproduction_interval = 30*24*time_constant; % 30 days
-hatch_probability = 0.5;
+hatch_probability = 1; % video change:0.5
 hungry_move_threshold = time_constant;
 max_move_out_of_hiding_probability = 0.05;
 max_move_out_of_hiding_probability_if_human_in_room = 0;
 max_change_room_probability = 0.01;
 max_change_rooms_if_no_food_probability = 0.05;
+moving_night_factor = 15;  % video change: 10
 max_moving_probability = [max_move_out_of_hiding_probability, max_move_out_of_hiding_probability_if_human_in_room, max_change_room_probability, max_change_rooms_if_no_food_probability];
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
-time_steps = 105120;
+time_steps = 144; % video change: 105120
 should_plot = true;
 
 kitchen_rate = 0.1;
@@ -60,11 +61,22 @@ for i_simulation = 1:length(food_quantity_array)
     bug2.age = randi([1,bug2.death_age],1);
     bug3.age = randi([1, bug3.death_age],1);
     bug4.age = randi([1, bug4.death_age],1);
+        
+    % video add
+    bug1.age = bug1.death_age - 130;
+    bug1.hunger = 4260;
+    bug_list = [bug1];
 
-    bug_list = [bug1,bug2, bug3, bug4];
+    % bug_list = [bug1,bug2, bug3, bug4];
+    % egg = Egg(0,0,0,time_constant);
+    % egg_list = [egg];
 
-    egg = Egg(0,0,0,time_constant);
+
+    % video add
+    egg = Egg(20,5,1,time_constant);
+    egg.age = egg.hatch_age - 5;
     egg_list = [egg];
+    
 
     sticky_pads = Sticky_pads(house);
 
@@ -90,7 +102,7 @@ for i_simulation = 1:length(food_quantity_array)
         [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = Bug.update_bugs(bug_list, egg_list,     ...
                     room_list, human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs,                ...
                     hungry_move_threshold, environment, house, food_lattice, sticky_pads,                               ...
-                    max_moving_probability, notice_probability, kill_if_noticed_probability);
+                    max_moving_probability, moving_night_factor, notice_probability, kill_if_noticed_probability);
 
         [egg_list, bug_list] = Egg.update_eggs(egg_list,bug_list,hatch_probability,house,time_constant);
 
