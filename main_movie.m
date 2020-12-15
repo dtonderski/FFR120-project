@@ -67,7 +67,7 @@ for i_simulation = 1:length(food_quantity_array)
     
     
     egg = Egg(20,5,1,time_constant);
-    egg.age = egg.hatch_age-120;
+    egg.age = egg.hatch_age-125;
     egg_list = [egg];
 
     sticky_pads = Sticky_pads(house);
@@ -81,6 +81,7 @@ for i_simulation = 1:length(food_quantity_array)
     statistics = Statistics(bug_list, time_steps, house, time_constant);
 
     figure(1)
+    figure('units','pixels','position',[0 0 1480 1080]) 
     [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads, time_constant);
 
     start_time = tic;
@@ -131,10 +132,10 @@ function [p1, p2, p3, p4, p5] = show_all(house, human_list, food_lattice, bug_li
     hold on
     house.show_house();
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
-    p2 = food_lattice.show_food('d', 15, 'blue');
+    p2 = food_lattice.show_food('d', 50, 'blue');
     p5 = sticky_pads.show_pads('.', 1000, 'cyan');
-    p3 = Bug.show_bugs(bug_list, '.', 1000,time_constant);
-    p4 = Egg.show_eggs(egg_list,'o',15,time_constant);
+    p3 = Bug.show_bugs(bug_list, '.', 2500,time_constant);
+    p4 = Egg.show_eggs(egg_list,'o',100,time_constant);
     set(gca,'YTick',[]);
     set(gca,'YTickLabel',[]);
     set(gca,'XTick',[]);
@@ -151,10 +152,10 @@ function [p1, p2, p3, p4, p5] = update_plot(human_list, food_lattice, bug_list, 
     delete(p4);
     delete(p5);
     p1 = Human.show_humans(human_list, 'x', 1000, 'black');
-    p2 = food_lattice.show_food('d', 20, 'blue');
+    p2 = food_lattice.show_food('d', 50, 'blue');
     p5 = sticky_pads.show_pads('.', 1000, 'cyan');
-    p3 = Bug.show_bugs(bug_list, '.', 1000,time_constant);
-    p4 = Egg.show_eggs(egg_list,'o',20,time_constant);  
+    p3 = Bug.show_bugs(bug_list, '.', 2500,time_constant);
+    p4 = Egg.show_eggs(egg_list,'o',100,time_constant);  
     title(get_title(environment), 'interpreter', 'latex', 'fontsize', 20);
     shg;
 end
