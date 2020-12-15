@@ -63,7 +63,7 @@ for i_simulation = 1:length(food_quantity_array)
     bug4.age = randi([1, bug4.death_age],1);
         
     % video add
-    bug1.age = bug1.death_age - 110;
+    bug1.age = bug1.death_age - 130;
     bug1.hunger = 4260;
     bug_list = [bug1];
 
@@ -74,7 +74,7 @@ for i_simulation = 1:length(food_quantity_array)
 
     % video add
     egg = Egg(20,5,1,time_constant);
-    egg.age = egg.hatch_age - 120;
+    egg.age = egg.hatch_age - 5;
     egg_list = [egg];
     
 
