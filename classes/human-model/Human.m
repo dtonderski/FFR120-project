@@ -11,6 +11,7 @@ classdef Human
         random_activity
         bedroom_name
         sleeping
+        noticed_bug
     end
     
     methods
@@ -21,6 +22,7 @@ classdef Human
             obj.random_activity = 0;
             obj.bedroom_name = bed_OneOrTwo;
             obj.sleeping = false;
+            obj.noticed_bug = zeros(7,1);   % 7 = # of rooms; de-hardcode?
         end
                 
         function obj = change_room(obj, room)
@@ -38,17 +40,36 @@ classdef Human
         function food_lattice = litter(obj, food_lattice, quantity, numberOfLocations)
             food_lattice = food_lattice.add_food_area(obj.room.room_start_house, obj.room.room_stop_house, quantity, numberOfLocations);      
         end
+        
+        % new function: spray pesticide in the room (RWS)
+        function [obj,pesticide] = spray_pesticide(obj,pesticide, house, room_list, cover_probability)
+            rouletteWheel = cumsum(obj.noticed_bug);
+            spin = randi(rouletteWheel(end));
+            [~, index] = max(rouletteWheel >= spin);
+            
+            obj = obj.change_room(house.find_room(room_list(index).room_name));
+            pesticide = pesticide.spray_pesticide_in_room(obj.room, obj, cover_probability);
+            obj.noticed_bug = zeros(7,1);
+        end
+            
+            
+                    
     end
     
     methods(Static)
     
-        function [human_list, food_lattice] = update_humans(human_list, house, environment, food_lattice, room_list, food_rate, food_quantity, n_food_locations)
+        function [human_list, food_lattice, pesticide] = update_humans(human_list, house, environment, food_lattice, room_list, food_rate, food_quantity, n_food_locations, pesticide, cover_probability, spray_notice_ratio)
             
                 
             for human_index = 1:length(human_list)
-                human = human_list(human_index);
-%               
-                if environment.weekend == false
+                human = human_list(human_index);               
+
+                % Check whether a human will spray pesticide
+                spray_probability = min(1, spray_notice_ratio * sum(human.noticed_bug));
+                if rand < spray_probability && human.sleeping == false
+                    [human,pesticide] = human.spray_pesticide(pesticide, house, room_list, cover_probability);                    
+                    
+                elseif environment.weekend == false
                     
                     if environment.time_step_current_day <= 8*environment.time_constant
                         

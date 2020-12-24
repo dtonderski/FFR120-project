@@ -43,6 +43,16 @@ classdef House
             error(sprintf("Couldn't find room %s!\n", string(room_name)));
         end
         
+        % add new function
+        function room_number = find_room_number(~, room_name, room_list)
+            for i_room = 1:length(room_list)
+                if isequal(room_name, room_list(i_room).room_name)
+                    room_number = i_room;
+                    break
+                end
+            end
+        end
+        
         function obj = add_room(obj, room)
             %METHOD1 Summary of this method goes here
             %   roomName  = string
