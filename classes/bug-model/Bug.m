@@ -23,7 +23,7 @@ classdef Bug
     end
     
     methods
-        function obj = Bug(x,y, house, time_constant)
+        function obj = Bug(x,y, house, time_constant, drug_resistance)
             obj.x = x;
             obj.y = y;
             obj.age = 0;
@@ -34,6 +34,7 @@ classdef Bug
             obj.death_age = randi([100*24*time_constant,200*24*time_constant],1); %100-200 days; timestep = 10 min
             obj.adult_age = randi([40*24*time_constant,80*24*time_constant],1);% 40-80 days
             obj.reproduction_age = obj.adult_age + 7*24*time_constant; % can reproduce after being an adult for 1 week
+            obj.drug_resistance = drug_resistance;
         end
         
         function obj = change_room_to_random_different(obj, room_list, human_list)
@@ -219,11 +220,12 @@ classdef Bug
         
         function egg = lay_eggs(obj, quantity,time_constant)
             egg = Egg(obj.x,obj.y,quantity,time_constant);
+            egg.drug_resistance = obj.drug_resistance;
         end
         
         function [death_standard,death_hunger, human_list] = update_death(obj, ...
                 human_list, notice_probability, kill_if_noticed_probability,   ...
-                environment)
+                environment, house, room_list, pesticide)
             time_constant = environment.time_constant;
                 
             if obj.age >= obj.adult_age && obj.age <= obj.death_age
@@ -233,6 +235,8 @@ classdef Bug
             end
             if obj.age >= obj.death_age || obj.hunger >= death_hunger
                 death_standard = 1;
+            elseif pesticide.lattice(obj.x,obj.y) == 1 && rand < (1 - obj.drug_resistance)
+                death_standard = 1;
             else
                 death_standard = 0;
                 for i_human = 1:length(human_list)
@@ -241,24 +245,25 @@ classdef Bug
                         %fprintf('Bug is in room %s at the same time as human!\n', obj.room.room_name)
                         %pause()
                         if rand < notice_probability
-                            % human.noticed_bug = 1;
+                            room_number = house.find_room_number(obj.room.room_name, room_list);
+                            human.noticed_bug(room_number) = human.noticed_bug(room_number) + 1;
                             if rand < kill_if_noticed_probability
                                 %fprintf('Bug is kil in room %s.\n', obj.room.room_name)
                                 death_standard = 1;
                             end
                         end
                     end
-                    %human_list(i_human) = human;
+                    human_list(i_human) = human;
                 end
             end         
         end
     end
     
     methods(Static)
-        function [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs] = update_bugs(bug_list, egg_list,     ...
+        function [bug_list, egg_list, food_lattice, sticky_pads, killed_bugs, human_list] = update_bugs(bug_list, egg_list,     ...
                 room_list, human_list, reproduction_interval, reproduction_hunger, minEggs, maxEggs,                ...
                 hungry_move_threshold, environment, house, food_lattice, sticky_pads,                               ...
-                max_moving_probability, notice_probability, kill_if_noticed_probability)
+                max_moving_probability, night_day_ratio, notice_probability, kill_if_noticed_probability, pesticide)
             
             bugs_to_kill_indices = [];
             for bug_index = 1:length(bug_list)
@@ -266,7 +271,7 @@ classdef Bug
                 
                 [death_standard,death_hunger, human_list] = bug.update_death(  ...
                     human_list, notice_probability, kill_if_noticed_probability,   ...
-                    environment);
+                    environment, house, room_list, pesticide);
                 
                 if death_standard == 1
                     bugs_to_kill_indices = [bugs_to_kill_indices, bug_index];
@@ -275,7 +280,7 @@ classdef Bug
                         [bug, sticky_pads] = bug.hungry_move(house,room_list,human_list, sticky_pads,food_lattice);
                     else
                         if environment.night
-                            moving_probability = 10 .* max_moving_probability .* bug.hunger ./ death_hunger;
+                            moving_probability = night_day_ratio .* max_moving_probability .* bug.hunger ./ death_hunger;
                         elseif ~environment.night
                             moving_probability = max_moving_probability .* bug.hunger ./ death_hunger;
                         end

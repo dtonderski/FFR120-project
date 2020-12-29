@@ -7,6 +7,7 @@ classdef Egg
         age {mustBeNumeric}
         egg_location
         hatch_age {mustBeNumeric}
+        drug_resistance {mustBeNumeric}
     end
     
     methods
@@ -31,16 +32,18 @@ classdef Egg
     end
         
         methods(Static)       
-            function [egg_list, bug_list] = update_eggs(egg_list,bug_list,hatch_probability,house,time_constant)
+            function [egg_list, bug_list] = update_eggs(egg_list,bug_list,hatch_probability,house,time_constant, pesticide)
                 egg_to_remove_indices = [];
                 for egg_index = 1:length(egg_list)
                     bug_egg = egg_list(egg_index);
                     bug_egg = bug_egg.hatch();
-                    if bug_egg.age == bug_egg.hatch_age
+                    if pesticide.lattice(bug_egg.egg_location(1),bug_egg.egg_location(2)) == 1
+                        bug_egg.quantity = bug_egg.quantity * bug_egg.drug_resistance;
+                    elseif bug_egg.age == bug_egg.hatch_age
                         egg_quantity = bug_egg.quantity;
                         hatch_number = fix(egg_quantity*hatch_probability);
                         for hatch_index = 1:hatch_number
-                            bug_list = [bug_list, Bug(bug_egg.egg_location(1), bug_egg.egg_location(2), house, time_constant)];
+                            bug_list = [bug_list, Bug(bug_egg.egg_location(1), bug_egg.egg_location(2), house, time_constant, bug_egg.drug_resistance)];
                         end
                         bug_egg = bug_egg.remove_quantity_of_eggs(egg_quantity);
                     end
