@@ -6,7 +6,7 @@ addpath('classes/bug-control-model')
 addpath('classes/enviroment-model')
 addpath('classes/statistics-model')
 
-clear
+clear all
 
 time_constant = 6; % time steps in one hour
 drug_resistance = 0.05;
@@ -25,7 +25,7 @@ max_moving_probability = [max_move_out_of_hiding_probability, max_move_out_of_hi
 notice_probability = 0.5;
 kill_if_noticed_probability = 0.2;
 time_steps = 105120;
-should_plot = true;
+should_plot = false;
 
 kitchen_rate = 0.1;
 livingarea_rate = 0.05;
@@ -37,7 +37,7 @@ food_rate = [kitchen_rate, livingarea_rate, hallway_rate, toilet_rate, bedroom_r
 food_quantity_array = 20;%[1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100];
 n_food_locations_array = min(round(food_quantity_array/2), 10);
 
-spray_notice_ratio = 0.1;
+spray_notice_ratio = 2e-3;
 cover_probability = 0.8;
 
 for i_simulation = 1:length(food_quantity_array)
@@ -120,7 +120,8 @@ for i_simulation = 1:length(food_quantity_array)
         end
     end
     fprintf('Simulation %d completed. Total time - %.5f. Number of time steps - %d.\n', i_simulation, toc(start_time), t)
-    save(sprintf('statistics/food_quantity%d.mat', food_quantity), 'statistics');
+%     save(sprintf('statistics/food_quantity%d.mat', food_quantity), 'statistics');
+    % save('statistics/pesticide_cover_0.5.mat', 'statistics','food_quantity_array','spray_notice_ratio','cover_probability');
 end
 
 function [p1, p2, p3, p4, p5, p6] = show_all(house, human_list, food_lattice, bug_list, egg_list, sticky_pads,pesticide,time_constant)

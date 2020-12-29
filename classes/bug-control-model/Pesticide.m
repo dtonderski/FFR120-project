@@ -4,11 +4,13 @@ classdef Pesticide
         room
         human
         lattice
+        times
     end
     
     methods
         function obj = Pesticide(house)
             obj.lattice = zeros(size(house.lattice_with_rooms));
+            obj.times = 0;
         end
         
         function obj = spray_pesticide_in_room(obj, room, human, cover_probability)

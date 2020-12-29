@@ -49,6 +49,7 @@ classdef Human
             
             obj = obj.change_room(house.find_room(room_list(index).room_name));
             pesticide = pesticide.spray_pesticide_in_room(obj.room, obj, cover_probability);
+            pesticide.times = pesticide.times + 1;
             obj.noticed_bug = zeros(7,1);
         end
             
@@ -66,7 +67,7 @@ classdef Human
 
                 % Check whether a human will spray pesticide
                 spray_probability = min(1, spray_notice_ratio * sum(human.noticed_bug));
-                if rand < spray_probability && human.sleeping == false
+                if rand < spray_probability && human.sleeping == false && matches(human.room.room_name,'Out') == 0
                     [human,pesticide] = human.spray_pesticide(pesticide, house, room_list, cover_probability);                    
                     
                 elseif environment.weekend == false
