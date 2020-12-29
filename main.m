@@ -5,7 +5,7 @@ addpath('classes/food-model')
 addpath('classes/bug-control-model')
 addpath('classes/enviroment-model')
 addpath('classes/statistics-model')
-
+% test
 clear all
 
 time_constant = 6; % time steps in one hour
