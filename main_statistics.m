@@ -63,25 +63,25 @@ for i_simulation = 2:length(notice_probability_array)
 end
 
 % hold on
-subplot(2,2,[1,2]);
-semilogx(notice_probability_array, mean_adult_bugs,'o',notice_probability_array, mean_bugs, 'x');
+% subplot(2,2,[1,2]);
+loglog(notice_probability_array, mean_adult_bugs,'o',notice_probability_array, mean_bugs, 'x');
 xlabel('spray-notice ratio'); 
 ylabel('Mean number of bugs');
 legend('Alive adult bugs','Alive bugs');
 xticklabels({'0','10^{-5}','10^{-4}','10^{-3}','10^{-2}','10^{-1}','1'});
 title('Bug control technique - Pesticide');
-subplot(2,2,3);
-semilogx(notice_probability_array, mean_adult_bugs,'o');
-xlabel('spray-notice ratio'); 
-ylabel('Mean number of adult bugs');
-xticks([10^-6,10^-5,10^-4,10^-3,10^-2,10^-1,1]);
-xticklabels({'0','10^{-5}','10^{-4}','10^{-3}','10^{-2}','10^{-1}','1'});
-subplot(2,2,4);
-semilogx(notice_probability_array, mean_bugs,'o');
-xlabel('spray-notice ratio'); 
-ylabel('Mean number of bugs');
-xticks([10^-6,10^-5,10^-4,10^-3,10^-2,10^-1,1]);
-xticklabels({'0','10^{-5}','10^{-4}','10^{-3}','10^{-2}','10^{-1}','1'});
+% subplot(2,2,3);
+% semilogx(notice_probability_array, mean_adult_bugs,'o');
+% xlabel('spray-notice ratio'); 
+% ylabel('Mean number of adult bugs');
+% xticks([10^-6,10^-5,10^-4,10^-3,10^-2,10^-1,1]);
+% xticklabels({'0','10^{-5}','10^{-4}','10^{-3}','10^{-2}','10^{-1}','1'});
+% subplot(2,2,4);
+% semilogx(notice_probability_array, mean_bugs,'o');
+% xlabel('spray-notice ratio'); 
+% ylabel('Mean number of bugs');
+% xticks([10^-6,10^-5,10^-4,10^-3,10^-2,10^-1,1]);
+% xticklabels({'0','10^{-5}','10^{-4}','10^{-3}','10^{-2}','10^{-1}','1'});
 % subplot(2,2,2);
 % semilogx(notice_probability_array, max_adult_bugs, 'x');
 % subplot(2,2,3);
@@ -108,17 +108,17 @@ for i_simulation = 1:length(cover_probability_array)
 end
 
 % hold on
-subplot(2,2,[1,2]);
-plot(cover_probability_array, mean_adult_bugs,'o',cover_probability_array, mean_bugs, 'x');
+% subplot(2,2,[1,2]);
+semilogy(cover_probability_array, mean_adult_bugs,'o',cover_probability_array, mean_bugs, 'x');
 xlabel('Pesticide cover percentage in hiding places'); 
 ylabel('Mean number of bugs');
 legend('Alive adult bugs','Alive bugs');
 title('Bug control technique - Pesticide');
-subplot(2,2,3);
-plot(cover_probability_array, mean_adult_bugs,'o');
-xlabel('Pesticide cover percentage in hiding places'); 
-ylabel('Mean number of adult bugs');
-subplot(2,2,4);
-plot(cover_probability_array, mean_bugs,'o');
-xlabel('Pesticide cover percentage in hiding places'); 
-ylabel('Mean number of bugs');
+% subplot(2,2,3);
+% plot(cover_probability_array, mean_adult_bugs,'o');
+% xlabel('Pesticide cover percentage in hiding places'); 
+% ylabel('Mean number of adult bugs');
+% subplot(2,2,4);
+% plot(cover_probability_array, mean_bugs,'o');
+% xlabel('Pesticide cover percentage in hiding places'); 
+% ylabel('Mean number of bugs');
