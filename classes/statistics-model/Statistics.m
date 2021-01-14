@@ -39,7 +39,7 @@ classdef Statistics
         end
         
         
-        function show_heatmap(obj)
+        function heatmap_object = show_heatmap(obj)
             clf
             x = size(obj.heatmap_data,1);
             y = size(obj.heatmap_data,2);            
@@ -47,7 +47,7 @@ classdef Statistics
             map=colormap(heatmap(show_heatmap_data)); 
             map(1,:)=1;
             
-            heatmap(1:x, y:-1:1,flipud(obj.heatmap_data'), 'GridVisible', 'off', 'Colormap', map);
+            heatmap_object = heatmap(1:x, y:-1:1,flipud(obj.heatmap_data'), 'GridVisible', 'off', 'Colormap', map);
         end
         
     end
